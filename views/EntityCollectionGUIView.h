@@ -24,9 +24,9 @@ class EntityCollectionGUIView
 
     // stick event detail members here
 
-    void serialize(std::ostream& os) const
+    void printToStream(std::ostream& os) const
     {
-      Event::serialize(os);
+      Event::printToStream(os);
       os << " | other stuff";
     }
   };

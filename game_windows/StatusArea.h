@@ -14,10 +14,10 @@ class StatusArea
   public Object
 {
 public:
-  StatusArea(sfg::SFGUI& sfgui,
+  StatusArea(sf::RenderWindow& renderWindow,
+             sfg::SFGUI& sfgui,
              sfg::Desktop& desktop,
              std::string name,
-             sf::IntRect dimensions,
              GameState& gameState);
   virtual ~StatusArea();
 
@@ -27,6 +27,7 @@ protected:
   virtual bool onEvent(Event const& event) override;
 
 private:
+  sf::RenderWindow& m_renderWindow;
   sfg::SFGUI& m_sfgui;
   sfg::Desktop& m_desktop;
   GameState& m_gameState;

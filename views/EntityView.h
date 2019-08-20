@@ -9,14 +9,11 @@ namespace Systems
   class Lighting;
 }
 
-/// Abstract class representing a view of a single Entity object.
+/// Abstract class representing a view of an Entity.
 class EntityView
   :
   public Object
 {
-  friend class NullGraphicViews;
-  friend class Standard2DGraphicViews;
-
 public:
   virtual ~EntityView();
 

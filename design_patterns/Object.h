@@ -8,7 +8,7 @@
 #include <utility>
 
 #include "Event.h"
-#include "Serializable.h"
+#include "Printable.h"
 
 // Forward declarations
 using ObserversSet = std::unordered_set<Object*>;
@@ -18,14 +18,14 @@ using EventQueue = std::queue<std::function<bool()>>;
 
 /// An object which can broadcast and/or listen to events.
 /// Observer pattern code adapted from http://0xfede.io/2015/12/13/T-C++-ObserverPattern.html
-class Object : public Serializable
+class Object : public Printable
 {
 
 public:
   struct Registration : public ConcreteEvent<Registration>
   {
     enum class State { Registered, Unregistered } state;
-    void serialize(std::ostream& o) const;
+    void printToStream(std::ostream& o) const;
   };
 
   Object(std::unordered_set<EventID> const events);
@@ -110,7 +110,7 @@ public:
   ///                   unsubscribe from all events.
   void removeObserver(Object& observer, EventID eventID = EventID::All);
 
-  virtual void serialize(std::ostream& o) const override;
+  virtual void printToStream(std::ostream& o) const override;
 
 protected:
   bool onEvent_NV(Event const& event);

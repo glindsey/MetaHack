@@ -3,15 +3,12 @@
 #include "config/Settings.h"
 #include "game/App.h"
 #include "game/GameState.h"
-#include "services/Service.h"
+#include "map/Map.h"
 #include "views/MapView.h"
 
-MapView::MapView(metagui::Desktop& desktop,
-                 std::string name,
-                 Map& map,
-                 UintVec2 size)
+MapView::MapView(std::string name,
+                 Map& map)
   :
-  metagui::GUIObject(desktop, name, {}, { 0, 0 }, size),
   m_map(map)
 {
   //startObserving(map);

@@ -9,24 +9,18 @@
 
 #include "ObjectRegistry.h"
 
-MessageLogView::MessageLogView(sfg::SFGUI& sfgui,
+MessageLogView::MessageLogView(sf::RenderWindow& renderWindow,
+                               sfg::SFGUI& sfgui,
                                sfg::Desktop& desktop,
                                std::string name,
-                               GameLog& model,
-                               sf::IntRect dimensions)
+                               GameLog& model)
   :
   Object({ EventCommandReady::id }),
+  m_renderWindow{ renderWindow },
   m_sfgui{ sfgui },
   m_desktop{ desktop },
   m_model{ model }
 {
-  // Create a FloatRect out of the IntRect dimensions.
-  /// @todo Just pass the FloatRect directly instead.
-  sf::FloatRect floatDims = sf::FloatRect(dimensions.left,
-                                          dimensions.top,
-                                          dimensions.width,
-                                          dimensions.height);
-
   m_window = sfg::Window::Create();
   m_window->SetTitle("Message Log");
 
@@ -83,7 +77,8 @@ MessageLogView::MessageLogView(sfg::SFGUI& sfgui,
   m_desktop.Add(m_window);
 
   // Set initial window size. (Has to be done after a widget is added to a hierarchy.)
-  m_window->SetAllocation(floatDims);
+  auto deskSize = m_renderWindow.getSize();
+  m_window->SetAllocation(sf::FloatRect(0.0f, 0.0f, deskSize.x * 0.7f, deskSize.y * 0.2f));
 
   // Add an observer to the GameLog model.
   subscribeTo(m_model, EventID::All);

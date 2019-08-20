@@ -26,7 +26,7 @@ namespace Systems
   {
   public:
     /// Event indicating an entity moved, but stayed on the same map.
-    /// 
+    ///
     struct EventEntityMoved : public ConcreteEvent<EventEntityMoved>
     {
       EventEntityMoved(EntityId entity_, Components::ComponentPosition const& oldPosition_) :
@@ -37,9 +37,9 @@ namespace Systems
       EntityId const entity;
       Components::ComponentPosition const oldPosition;
 
-      void serialize(std::ostream& os) const
+      void printToStream(std::ostream& os) const
       {
-        Event::serialize(os);
+        Event::printToStream(os);
         os << "| entity = " << entity << " | old position = " << oldPosition;
       }
     };
@@ -54,9 +54,9 @@ namespace Systems
 
       EntityId const entity;
 
-      void serialize(std::ostream& os) const
+      void printToStream(std::ostream& os) const
       {
-        Event::serialize(os);
+        Event::printToStream(os);
         os << "| entity = " << entity;
       }
     };

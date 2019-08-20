@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"render",
+				"render\t(App.cpp)"
+			],
+			[
 				"noncopy",
 				"noncopyable.hpp\t(Paths.h)"
 			],
@@ -95,32 +99,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "game/App.cpp",
-			"settings":
-			{
-				"buffer_size": 11589,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "CMakeLists.txt",
-			"settings":
-			{
-				"buffer_size": 26781,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "services/FileSystemGameRules.h",
-			"settings":
-			{
-				"buffer_size": 862,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -199,52 +177,133 @@
 	"expanded_folders":
 	[
 		"/home/greglindsey/personal/projects/MetaHack",
+		"/home/greglindsey/personal/projects/MetaHack/build",
 		"/home/greglindsey/personal/projects/MetaHack/config",
-		"/home/greglindsey/personal/projects/MetaHack/services"
+		"/home/greglindsey/personal/projects/MetaHack/external",
+		"/home/greglindsey/personal/projects/MetaHack/game",
+		"/home/greglindsey/personal/projects/MetaHack/map",
+		"/home/greglindsey/personal/projects/MetaHack/services",
+		"/home/greglindsey/personal/projects/MetaHack/types"
 	],
 	"file_history":
 	[
-		"/home/greglindsey/personal/projects/MetaHack/systems/SystemNarrator.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/config/Strings.h",
-		"/home/greglindsey/personal/projects/MetaHack/config/Strings.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/utilities/Shortcuts.h",
-		"/home/greglindsey/personal/projects/MetaHack/config/Paths.h",
-		"/home/greglindsey/personal/projects/MetaHack/config/Paths.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/map/Map.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/tilesheet/TileSheet.h",
+		"/home/greglindsey/personal/projects/MetaHack/tilesheet/TileSheet.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game_windows/StatusArea.h",
+		"/home/greglindsey/personal/projects/MetaHack/game_windows/StatusArea.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.h",
+		"/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapView2D.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapView2D.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapView.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapTileView2D.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapTileView2D.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/inventory/InventoryArea.h",
+		"/home/greglindsey/personal/projects/MetaHack/inventory/InventoryArea.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/gui/GUIDesktop.h",
+		"/home/greglindsey/personal/projects/MetaHack/gui/GUIDesktop.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIListView.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIListView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/CMakeLists.txt",
+		"/home/greglindsey/personal/projects/MetaHack/config/Bible.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game/AppStateSplashScreen.h",
+		"/home/greglindsey/personal/projects/MetaHack/game/AppStateSplashScreen.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game/AppStateMainMenu.h",
+		"/home/greglindsey/personal/projects/MetaHack/game/AppStateMainMenu.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.h",
 		"/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game/AppState.h",
+		"/home/greglindsey/personal/projects/MetaHack/game/AppState.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game/App.h",
 		"/home/greglindsey/personal/projects/MetaHack/game/App.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionWield.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/gui/GUIWindow.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapTileView.h",
+		"/home/greglindsey/personal/projects/MetaHack/gui/GUITitleBar.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/gui/GUIObject.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game/GameState.h",
+		"/home/greglindsey/personal/projects/MetaHack/game/GameState.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/EntityView2D.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/EntityView2D.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/EntityView.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/EntityView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/gui/GUILabel.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/services/IGraphicViews.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/Standard2DGraphicViews.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/Standard2DGraphicViews.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/NullGraphicViews.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapTileStandard2DView.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapTileStandard2DView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapStandard2DView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemGeometry.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/utilities/Shortcuts.h",
+		"/home/greglindsey/personal/projects/MetaHack/design_patterns/ObjectRegistry.h",
+		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Object.h",
+		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Object.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/gui/GUIObject.h",
+		"/home/greglindsey/personal/projects/MetaHack/objects/GameLog.h",
+		"/home/greglindsey/personal/projects/MetaHack/objects/GameLog.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/design_patterns/ObjectPtr.h",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionAttack.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionClose.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionDie.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionDrop.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionEat.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionFill.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionGet.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionHurl.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionInscribe.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionLock.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionMove.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionOpen.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionPutInto.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionQuaff.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionRead.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionShoot.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionTakeOff.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionTakeOut.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionTurn.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUnlock.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUnwield.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUse.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/actions/ActionWear.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/actions/ActionWait.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUse.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUnwield.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUnlock.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionTurn.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionTakeOut.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionTakeOff.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionShoot.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionRead.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionQuaff.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionPutInto.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionOpen.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionMove.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionLock.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionInscribe.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionFill.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionEat.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionDrop.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionDie.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionClose.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionAttack.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionWield.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/lua/LuaFunctions-Global.h",
 		"/home/greglindsey/personal/projects/MetaHack/actions/Action.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/Action.h",
+		"/home/greglindsey/personal/projects/MetaHack/config/Bible.h",
+		"/home/greglindsey/personal/projects/MetaHack/services/MessageLog.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/services/IMessageLog.h",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemNarrator.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/lua/LuaObject.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/lua/LuaFunctions-Entity.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/EntityStandard2DView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/entity/EntityFactory.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/config/Settings.h",
+		"/home/greglindsey/personal/projects/MetaHack/config/Settings.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/maptile/MapTile.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/map/Map.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/EntityFancyAsciiView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/services/NullGameRules.h",
+		"/home/greglindsey/personal/projects/MetaHack/services/IGameRules.h",
+		"/home/greglindsey/personal/projects/MetaHack/services/FileSystemGameRules.h",
+		"/home/greglindsey/personal/projects/MetaHack/services/FileSystemGameRules.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/config/Strings.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapTileFancyAsciiView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapFancyAsciiView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/services/IConfigSettings.h",
+		"/home/greglindsey/personal/projects/MetaHack/services/IConfigSettings.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/FancyAsciiGraphicViews.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/services/FallbackConfigSettings.h",
+		"/home/greglindsey/personal/projects/MetaHack/config/Strings.h",
+		"/home/greglindsey/personal/projects/MetaHack/config/Paths.h",
+		"/home/greglindsey/personal/projects/MetaHack/config/Paths.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/services/Strings.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/services/Strings.h",
 		"/home/greglindsey/personal/projects/MetaHack/services/NullStrings.h",
 		"/home/greglindsey/personal/projects/MetaHack/services/IStrings.h",
 		"/home/greglindsey/personal/projects/MetaHack/include/stdafx.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/Standard2DGraphicViews.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/lua/LuaObject.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/services/FileSystemGameRules.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/services/DefaultPaths.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/services/DefaultPaths.h",
 		"/home/greglindsey/personal/projects/MetaHack/services/IPaths.cpp",
@@ -255,83 +314,7 @@
 		"/home/greglindsey/personal/projects/MetaHack/components/ComponentInventory.h",
 		"/home/greglindsey/personal/projects/MetaHack/components/ComponentManager.h",
 		"/home/greglindsey/personal/projects/MetaHack/systems/SystemNarrator.h",
-		"/home/greglindsey/personal/projects/MetaHack/components/modifiers/Physical.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIListView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIListView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIView.h",
-		"/home/greglindsey/personal/projects/MetaHack/game/GameState.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/inventory/InventoryArea.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/inventory/InventoryArea.h",
-		"/home/greglindsey/personal/projects/MetaHack/inventory/InventorySlot.h",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUIWindow.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/DecoratedWidget.hpp",
-		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/Decorated.hpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/App.h",
-		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Event.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Event.h",
-		"/home/greglindsey/personal/projects/MetaHack/game/GameState.h",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUIObject.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/InventoryGUIView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/main.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/systems/Manager.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Serializable.h",
-		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Object.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Object.h",
-		"/home/greglindsey/personal/projects/MetaHack/design_patterns/ObjectRegistry.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/design_patterns/ObjectRegistry.h",
-		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Serializable.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/Decorator.inc",
-		"/home/greglindsey/personal/projects/MetaHack/state_machine/StateMachine.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game_windows/StatusArea.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUIDesktop.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/systems/SystemGeometry.h",
-		"/home/greglindsey/personal/projects/MetaHack/systems/SystemGeometry.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/systems/SystemChoreographer.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/InventoryGUIListView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/entity/EntityId.h",
-		"/home/greglindsey/personal/projects/MetaHack/entity/EntityId.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/components/ComponentPosition.h",
-		"/home/greglindsey/personal/projects/MetaHack/components/ComponentPosition.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.h",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUIObject.h",
-		"/home/greglindsey/personal/projects/MetaHack/text/UI.txt",
-		"/home/greglindsey/personal/projects/MetaHack/inventory/InventorySelection.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/InventoryGUIView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityGUIView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityGUIView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityGUIIconView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityGUIIconView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/CMakeLists.txt",
-		"/home/greglindsey/personal/projects/MetaHack/views/InventoryGUIListView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/Standard2DGraphicViews.h",
-		"/home/greglindsey/personal/projects/MetaHack/game_windows/StatusArea.h",
-		"/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/FallbackConfigSettings.cpp",
-		"/home/greglindsey/personal/projects/SFGUI/CMakeLists.txt",
-		"/home/greglindsey/personal/projects/SFGUI/cmake/Modules/FindSFML.cmake",
-		"/home/greglindsey/personal/projects/MetaHack/cmake_modules/FindSFML.cmake",
-		"/home/greglindsey/personal/projects/MetaHack/SFGUI/CMakeLists.txt",
-		"/home/greglindsey/personal/projects/MetaHack/.gitmodules",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppState.h",
-		"/home/greglindsey/personal/projects/MetaHack/keybuffer/KeyBuffer.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/IMessageLog.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/IMessageLog.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/services/MessageLog.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/state_machine/State.h",
-		"/home/greglindsey/personal/projects/MetaHack/keybuffer/KeyBuffer.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUIWindow.h",
-		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/Widgets.hpp",
-		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/ListBox.hpp",
-		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/ListBox.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/EntryPlus.hpp",
-		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/EntryPlus.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateMainMenu.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateMainMenu.h",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateSplashScreen.cpp"
+		"/home/greglindsey/personal/projects/MetaHack/components/modifiers/Physical.cpp"
 	],
 	"find":
 	{
@@ -343,6 +326,8 @@
 		"where_history":
 		[
 			"*.c,*.cpp,*.h",
+			"Config::settings()",
+			"*.c,*.cpp,*.h",
 			"",
 			"types",
 			""
@@ -353,6 +338,77 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"handle_key_press",
+			"UIEvents::EventKeyPressed",
+			"handleSFMLEvent",
+			"onEvent",
+			"UIEvents::EventKeyPressed::id",
+			"handle_key_press",
+			"fs",
+			"using fs",
+			"calcStatusAreaDims",
+			"calcInventoryDims",
+			"_drawPreChildren",
+			"m_inventoryArea",
+			"MapView2D",
+			"size",
+			"the_desktop",
+			"renderMap",
+			"render",
+			"the_desktop",
+			"metagui",
+			"GUIObject",
+			"GUIDesktop",
+			"Desktop",
+			"GUIWindow",
+			"Window",
+			"metagui::Window",
+			"TitleBar",
+			"GUITitleBar",
+			"StringPair",
+			"GUILabel",
+			"services/Service.h",
+			"IGraphicViews",
+			"graphicViews",
+			"views",
+			"IGraphicViews",
+			"Null",
+			"Standard2DGraphicViews",
+			"MapStandard2DView",
+			"loadViewResourcesFor",
+			"createMapView",
+			"MapStandard2DView",
+			"m_views",
+			"MapTileStandard2DView",
+			"createMapTileView",
+			"m_views",
+			"hasTilesFor",
+			"loadViewResourcesFor",
+			"createEntityView",
+			"m_views",
+			"m_tileSheet",
+			"EntityStandard2DView",
+			"createEntityView",
+			"EntityGUIIconView",
+			"EntityGUIView",
+			"IGraphicViews",
+			"removeObserver",
+			"GameLog",
+			"m_model",
+			"MessageLog",
+			"IMessageLog",
+			"GAME",
+			"#include \"services/IMessageLog.h\"",
+			"IMessageLog",
+			"Ascii",
+			"IGameRules",
+			"S<IGameRules>()",
+			"IGameRules",
+			"#include \"services/IGameRules.h\"",
+			"S<IConfigSettings>()",
+			"IConfigSettings",
+			"#include \"services/IConfigSettings.h\"",
+			"IConfigSettings",
 			"m_layout#include",
 			"IStrings",
 			"S<IStrings>()",
@@ -409,26 +465,7 @@
 			"types/GameObject.h",
 			"getDisplayName",
 			"GameObject",
-			"getDisplayName",
-			"find",
-			"unexpected",
-			"@todo",
-			"**TODO**",
-			"@todo",
-			"**TODO**",
-			"\n  ",
-			"**TODO**",
-			"TODO",
-			"**TODO**",
-			"@todo",
-			"<>",
-			"\\todo",
-			"276",
-			"277",
-			"276",
-			"@todo",
-			"LIBRARY_LINKDIRS",
-			"main.cpp"
+			"getDisplayName"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -436,6 +473,11 @@
 		"regex": false,
 		"replace_history":
 		[
+			"MapView2D",
+			"MapTileView2D",
+			"EntityView2D",
+			"Config::bible()",
+			"Config::settings()",
 			"#include",
 			"Config::strings()",
 			"m_layout",
@@ -458,609 +500,14 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "game/App.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 11589,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								353,
-								353
-							]
-						],
-						"settings":
-						{
-							"SL.686.region_keys":
-							[
-							],
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.clone": -1,
-							"bracket_highlighter.clone_locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.clone_regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"git_gutter_is_enabled": true,
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"tabs_extra_last_activated": 1552403758.95,
-							"tabs_extra_last_activated_sheet_index": 0,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "CMakeLists.txt",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 26781,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								16717,
-								16717
-							]
-						],
-						"settings":
-						{
-							"SL.35.region_keys":
-							[
-							],
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.clone": -1,
-							"bracket_highlighter.clone_locations":
-							{
-								"close":
-								{
-									"1":
-									[
-										16771,
-										16772
-									]
-								},
-								"icon":
-								{
-									"1":
-									[
-										"Packages/BracketHighlighter/icons/round_bracket.png",
-										"region.yellowish"
-									]
-								},
-								"open":
-								{
-									"1":
-									[
-										16366,
-										16367
-									]
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.clone_regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-									"1":
-									[
-										16771,
-										16772
-									]
-								},
-								"icon":
-								{
-									"1":
-									[
-										"Packages/BracketHighlighter/icons/round_bracket.png",
-										"region.yellowish"
-									]
-								},
-								"open":
-								{
-									"1":
-									[
-										16366,
-										16367
-									]
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"git_gutter_is_enabled": true,
-							"syntax": "Packages/CMake/CMake.sublime-syntax",
-							"tab_size": 4,
-							"tabs_extra_last_activated": 1552403557.25,
-							"tabs_extra_last_activated_sheet_index": 0,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 8282.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "services/FileSystemGameRules.h",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 862,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								156,
-								156
-							]
-						],
-						"settings":
-						{
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.clone": -1,
-							"bracket_highlighter.clone_locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.clone_regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-									"1":
-									[
-										860,
-										861
-									]
-								},
-								"icon":
-								{
-									"1":
-									[
-										"Packages/BracketHighlighter/icons/curly_bracket.png",
-										"region.purplish"
-									]
-								},
-								"open":
-								{
-									"1":
-									[
-										155,
-										156
-									]
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"git_gutter_is_enabled": true,
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"tabs_extra_last_activated": 1552403756.61,
-							"tabs_extra_last_activated_sheet_index": 1,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 31.0
+		"height": 33.0
 	},
 	"input":
 	{
@@ -1119,8 +566,108 @@
 		"selected_items":
 		[
 			[
+				"AppState.h",
+				"game/AppState.h"
+			],
+			[
+				"MapTileView2D.cpp",
+				"views/MapTileView2D.cpp"
+			],
+			[
+				"MapTileView2D.h",
+				"views/MapTileView2D.h"
+			],
+			[
+				"EntityCollection",
+				"views/EntityCollectionGUIListView.cpp"
+			],
+			[
+				"EntityCollectionGUIListView.h",
+				"views/EntityCollectionGUIListView.h"
+			],
+			[
+				"TileSheet.h",
+				"tilesheet/TileSheet.h"
+			],
+			[
+				"TileS",
+				"tilesheet/TileSheet.cpp"
+			],
+			[
+				"StatusArea",
+				"game_windows/StatusArea.cpp"
+			],
+			[
+				"AppStateGameMode.cpp",
+				"game/AppStateGameMode.cpp"
+			],
+			[
+				"MessageLogView.cpp",
+				"game_windows/MessageLogView.cpp"
+			],
+			[
+				"Splash",
+				"game/AppStateSplashScreen.cpp"
+			],
+			[
+				"AppStateMain",
+				"game/AppStateMainMenu.h"
+			],
+			[
+				"AppStateMainMenu.cpp",
+				"game/AppStateMainMenu.cpp"
+			],
+			[
+				"MapView2D.cpp",
+				"views/MapView2D.cpp"
+			],
+			[
+				"MapView2D.h",
+				"views/MapView2D.h"
+			],
+			[
+				"MapView.h",
+				"views/MapView.h"
+			],
+			[
 				"App.cpp",
 				"game/App.cpp"
+			],
+			[
+				"AppStateGameMode.h",
+				"game/AppStateGameMode.h"
+			],
+			[
+				"TileSheet.cpp",
+				"tilesheet/TileSheet.cpp"
+			],
+			[
+				"CMake",
+				"CMakeLists.txt"
+			],
+			[
+				"GUIObject.h",
+				"gui/GUIObject.h"
+			],
+			[
+				"Message",
+				"game_windows/MessageLogView.h"
+			],
+			[
+				"GameState.h",
+				"game/GameState.h"
+			],
+			[
+				"CMakeLists",
+				"CMakeLists.txt"
+			],
+			[
+				"Action.h",
+				"actions/Action.h"
+			],
+			[
+				"Attack",
+				"actions/ActionAttack.cpp"
 			],
 			[
 				"Action.cpp",
@@ -1147,10 +694,6 @@
 				"components/ComponentInventory.h"
 			],
 			[
-				"CMake",
-				"CMakeLists.txt"
-			],
-			[
 				"Event.cpp",
 				"design_patterns/Event.cpp"
 			],
@@ -1169,10 +712,6 @@
 			[
 				"Event.h",
 				"design_patterns/Event.h"
-			],
-			[
-				"AppStateGameMode.cpp",
-				"game/AppStateGameMode.cpp"
 			],
 			[
 				"Object.cpp",
@@ -1223,10 +762,6 @@
 				"text/UI.txt"
 			],
 			[
-				"CMakeLists",
-				"SFGUI/CMakeLists.txt"
-			],
-			[
 				".gitmodules",
 				".gitmodules"
 			],
@@ -1255,10 +790,6 @@
 				"keybuffer/KeyBuffer.h"
 			],
 			[
-				"AppStateGameMode.h",
-				"game/AppStateGameMode.h"
-			],
-			[
 				"Key",
 				"keybuffer/KeyBuffer.cpp"
 			],
@@ -1269,10 +800,6 @@
 			[
 				"App.c",
 				"game/App.cpp"
-			],
-			[
-				"MessageLogView.cpp",
-				"game_windows/MessageLogView.cpp"
 			],
 			[
 				"MapTile.cpp",
@@ -1293,10 +820,6 @@
 			[
 				"ActionCRTP.h",
 				"actions/ActionCRTP.h"
-			],
-			[
-				"Action.h",
-				"actions/Action.h"
 			],
 			[
 				"CMakeL",
@@ -1553,82 +1076,6 @@
 			[
 				"Gemfiles",
 				"client/node_modules/draft-js/lib/getTextContentFromFiles.js"
-			],
-			[
-				"old_",
-				"lib/utility/sanitizers/old_html_input_sanitizer.rb"
-			],
-			[
-				"html_saniti",
-				"spec/concerns/html_sanitizer_concern_spec.rb"
-			],
-			[
-				"presenters/users/index_presenter.rb",
-				"app/presenters/users/index_presenter.rb"
-			],
-			[
-				"spec/presenters/users/index_",
-				"spec/presenters/users/index_presenter_spec.rb"
-			],
-			[
-				"environments/production.rb",
-				"config/environments/production.rb"
-			],
-			[
-				"translation_controll",
-				"app/controllers/admin/translations_controller.rb"
-			],
-			[
-				"strong_par",
-				"config/initializers/strong_parameter_testing.rb"
-			],
-			[
-				"users_controller",
-				"app/controllers/users_controller.rb"
-			],
-			[
-				"strong_param",
-				"config/initializers/strong_parameters.rb"
-			],
-			[
-				"test.rb",
-				"config/environments/test.rb"
-			],
-			[
-				"develop",
-				"config/environments/development.rb"
-			],
-			[
-				"ApplicationRecord",
-				"app/models/application_record.rb"
-			],
-			[
-				"events/ar_model.rb",
-				"lib/events/ar_model.rb"
-			],
-			[
-				"lib/events/creation/director.rb",
-				"lib/events/creation/director.rb"
-			],
-			[
-				"session_repository.rb",
-				"lib/events/session_repository.rb"
-			],
-			[
-				"users/repository.rb",
-				"lib/users/repository.rb"
-			],
-			[
-				"session_attendance.rb",
-				"app/models/session_attendance.rb"
-			],
-			[
-				"document_converter.rb",
-				"app/models/document_converter.rb"
-			],
-			[
-				"strong_parameters.rb",
-				"config/initializers/strong_parameters.rb"
 			]
 		],
 		"width": 0.0

@@ -21,9 +21,9 @@ class InventorySelection : public Object
 
     EntityId const entityId;
 
-    void serialize(std::ostream& os) const
+    void printToStream(std::ostream& os) const
     {
-      Event::serialize(os);
+      Event::printToStream(os);
       os << " | id:" << entityId;
     }
   };
@@ -39,9 +39,9 @@ class InventorySelection : public Object
     std::vector<InventorySlot> const slots;
     unsigned int quantity;
 
-    void serialize(std::ostream& os) const
+    void printToStream(std::ostream& os) const
     {
-      Event::serialize(os);
+      Event::printToStream(os);
       os << " | quantity: " << quantity << " | slots:";
       for (auto& slot : slots)
       {

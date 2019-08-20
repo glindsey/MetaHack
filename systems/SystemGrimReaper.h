@@ -19,9 +19,9 @@ namespace Systems
 
       EntityId const m_entity;
 
-      void serialize(std::ostream& os) const
+      void printToStream(std::ostream& os) const
       {
-        Event::serialize(os);
+        Event::printToStream(os);
         os << " | entity = " << m_entity;
       }
     };
@@ -34,9 +34,9 @@ namespace Systems
 
       EntityId const m_entity;
 
-      void serialize(std::ostream& os) const
+      void printToStream(std::ostream& os) const
       {
-        Event::serialize(os);
+        Event::printToStream(os);
         os << " | entity = " << m_entity;
       }
     };

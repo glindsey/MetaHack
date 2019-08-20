@@ -22,7 +22,6 @@
 #include "map/MapFactory.h"
 #include "maptile/MapTile.h"
 #include "objects/GameLog.h"
-#include "services/Service.h"
 #include "state_machine/StateMachine.h"
 #include "systems/Manager.h"
 #include "systems/SystemDirector.h"
@@ -33,8 +32,7 @@
 #include "utilities/GetLetterKey.h"
 #include "utilities/Shortcuts.h"
 #include "utilities/StringTransforms.h"
-#include "views/MapView.h"
-#include "views/Standard2DGraphicViews.h"
+#include "views/MapView2D.h"
 
 /// Actions that can be performed.
 #include "actions/ActionAttack.h"
@@ -60,9 +58,6 @@
 #include "actions/ActionWait.h"
 #include "actions/ActionWield.h"
 
-#include "GUIObject.h"
-#include "GUIWindow.h"
-
 AppStateGameMode::AppStateGameMode(StateMachine& stateMachine,
                                    sf::RenderWindow& appWindow,
                                    sfg::SFGUI& sfgui,
@@ -71,8 +66,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& stateMachine,
   AppState(stateMachine,
            { App::EventAppWindowResized::id,
              UIEvents::EventKeyPressed::id },
-           "AppStateGameMode",
-           std::bind(&AppStateGameMode::renderMap, this, std::placeholders::_1, std::placeholders::_2)),
+           "AppStateGameMode"),
   m_appWindow{ appWindow },
   m_sfgui{ sfgui },
   m_desktop{ desktop },
@@ -87,36 +81,30 @@ AppStateGameMode::AppStateGameMode(StateMachine& stateMachine,
 {
   subscribeTo(App::instance(), EventID::All);
 
-  m_messageLogView.reset(NEW MessageLogView(m_sfgui,
+  m_messageLogView.reset(NEW MessageLogView(m_appWindow,
+                                            m_sfgui,
                                             m_desktop,
                                             "MessageLogView",
-                                            m_gameState->gameLog(),
-                                            calcMessageLogDims()));
+                                            m_gameState->gameLog()));
 
   subscribeTo(m_messageLogView.get(), EventID::All);
 
-  the_desktop.addChild(NEW InventoryArea(the_desktop,
-                                         m_sfgui,
-                                         m_desktop,
-                                         "InventoryArea",
-                                         *m_inventorySelection,
-                                         calcInventoryDims(),
-                                         *m_gameState))->setFlag("titlebar", true);
+  m_inventoryArea.reset(NEW InventoryArea(m_appWindow,
+                                          m_sfgui,
+                                          m_desktop,
+                                          "InventoryArea",
+                                          *m_inventorySelection,
+                                          *m_gameState));
 
-  m_statusArea.reset(NEW StatusArea(m_sfgui,
+  m_statusArea.reset(NEW StatusArea(m_appWindow,
+                                    m_sfgui,
                                     m_desktop,
                                     "StatusArea",
-                                    calcStatusAreaDims(),
                                     *m_gameState));
-
-  // Create the standard map views provider.
-  /// @todo Make this configurable.
-  Service<IGraphicViews>::provide(NEW Standard2DGraphicViews());
 }
 
 AppStateGameMode::~AppStateGameMode()
 {
-  the_desktop.removeChild("InventoryArea");
 }
 
 void AppStateGameMode::execute()
@@ -193,10 +181,7 @@ bool AppStateGameMode::initialize()
   resetInventorySelection();
 
   // Set the map view.
-  m_mapView = the_desktop.addChild(S<IGraphicViews>().createMapView(the_desktop,
-                                                                    "MainMapView",
-                                                                    game_map,
-                                                                    the_desktop.getSize()));
+  m_mapView.reset(NEW MapView2D("MainMapView", game_map));
 
   // Get the map view ready.
   m_mapView->updateTiles(player, m_systemManager->lighting());
@@ -212,8 +197,6 @@ bool AppStateGameMode::initialize()
 
 bool AppStateGameMode::terminate()
 {
-  auto mapView = the_desktop.removeChild("MainMapView");
-
   return true;
 }
 
@@ -228,7 +211,7 @@ Systems::Manager& AppStateGameMode::systems()
 }
 
 // === PROTECTED METHODS ======================================================
-void AppStateGameMode::renderMap(sf::RenderTexture& texture, int frame)
+bool AppStateGameMode::render(sf::RenderTexture& texture, int frame)
 {
   auto& config = Config::settings();
   auto& game = gameState();
@@ -278,6 +261,7 @@ void AppStateGameMode::renderMap(sf::RenderTexture& texture, int frame)
   }
 
   texture.display();
+  return true;
 }
 
 bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
@@ -298,12 +282,10 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
       {
         case GameInputState::Map:
           m_currentInputState = GameInputState::MessageLog;
-          //the_desktop.getChild("MessageLogView").setGlobalFocus(true);
           return false;
 
         case GameInputState::MessageLog:
           m_currentInputState = GameInputState::Map;
-          //the_desktop.getChild("StatusArea").setGlobalFocus(true);
           return false;
 
         default:
@@ -993,10 +975,8 @@ bool AppStateGameMode::onEvent(Event const& event)
   if (id == App::EventAppWindowResized::id)
   {
     auto info = static_cast<App::EventAppWindowResized const&>(event);
-    the_desktop.setSize({ info.newSize.x, info.newSize.y });
-    //the_desktop.getChild("MessageLogView").setRelativeDimensions(calcMessageLogDims());
-    the_desktop.getChild("InventoryArea").setRelativeDimensions(calcInventoryDims());
-    //the_desktop.getChild("StatusArea").setRelativeDimensions(calcStatusAreaDims());
+    //m_mapView.setSize({ info.newSize.x, info.newSize.y });
+    //m_inventoryArea->setRelativeDimensions(calcInventoryDims());
     return false;
   }
   else if (id == MessageLogView::EventCommandReady::id)
@@ -1047,20 +1027,20 @@ bool AppStateGameMode::onEvent(Event const& event)
   return false;
 }
 
-sf::IntRect AppStateGameMode::calcMessageLogDims()
-{
-  sf::IntRect messageLogDims;
-  auto& config = Config::settings();
+// sf::IntRect AppStateGameMode::calcMessageLogDims()
+// {
+//   sf::IntRect messageLogDims;
+//   auto& config = Config::settings();
 
-  int inventory_area_width = config.get("inventory-area-width");
-  int messagelog_area_height = config.get("messagelog-area-height");
-  messageLogDims.width = m_appWindow.getSize().x - (inventory_area_width + 24);
-  messageLogDims.height = messagelog_area_height - 10;
-  //messageLogDims.height = static_cast<int>(m_appWindow.getSize().y * 0.25f) - 10;
-  messageLogDims.left = 12;
-  messageLogDims.top = 5;
-  return messageLogDims;
-}
+//   int inventory_area_width = config.get("inventory-area-width");
+//   int messagelog_area_height = config.get("messagelog-area-height");
+//   messageLogDims.width = m_appWindow.getSize().x - (inventory_area_width + 24);
+//   messageLogDims.height = messagelog_area_height - 10;
+//   //messageLogDims.height = static_cast<int>(m_appWindow.getSize().y * 0.25f) - 10;
+//   messageLogDims.left = 12;
+//   messageLogDims.top = 5;
+//   return messageLogDims;
+// }
 
 void AppStateGameMode::resetInventorySelection()
 {
@@ -1090,33 +1070,32 @@ void AppStateGameMode::resetInventorySelection()
   }
 }
 
-sf::IntRect AppStateGameMode::calcStatusAreaDims()
-{
-  sf::IntRect statusAreaDims;
-  sf::IntRect invAreaDims = the_desktop.getChild("InventoryArea").getRelativeDimensions();
-  auto& config = Config::settings();
+// sf::IntRect AppStateGameMode::calcStatusAreaDims()
+// {
+//   sf::IntRect statusAreaDims;
+//   sf::IntRect invAreaDims = m_inventoryArea->getRelativeDimensions();
+//   auto& config = Config::settings();
 
-  statusAreaDims.width = m_appWindow.getSize().x -
-    (invAreaDims.width + 24);
-  statusAreaDims.height = config.get("status-area-height");
-  statusAreaDims.top = m_appWindow.getSize().y - (statusAreaDims.height + 5);
-  statusAreaDims.left = 12;
-  return statusAreaDims;
-}
+//   statusAreaDims.width = m_appWindow.getSize().x -
+//     (invAreaDims.width + 24);
+//   statusAreaDims.height = config.get("status-area-height");
+//   statusAreaDims.top = m_appWindow.getSize().y - (statusAreaDims.height + 5);
+//   statusAreaDims.left = 12;
+//   return statusAreaDims;
+// }
 
-sf::IntRect AppStateGameMode::calcInventoryDims()
-{
-  //sf::IntRect messageLogDims = the_desktop.getChild("MessageLogView").getRelativeDimensions();
-  sf::IntRect inventoryAreaDims;
-  auto& config = Config::settings();
+// sf::IntRect AppStateGameMode::calcInventoryDims()
+// {
+//   sf::IntRect inventoryAreaDims;
+//   auto& config = Config::settings();
 
-  inventoryAreaDims.width = config.get("inventory-area-width");
-  inventoryAreaDims.height = m_appWindow.getSize().y - 10;
-  inventoryAreaDims.left = m_appWindow.getSize().x - (inventoryAreaDims.width + 3);
-  inventoryAreaDims.top = 5;
+//   inventoryAreaDims.width = config.get("inventory-area-width");
+//   inventoryAreaDims.height = m_appWindow.getSize().y - 10;
+//   inventoryAreaDims.left = m_appWindow.getSize().x - (inventoryAreaDims.width + 3);
+//   inventoryAreaDims.top = 5;
 
-  return inventoryAreaDims;
-}
+//   return inventoryAreaDims;
+// }
 
 bool AppStateGameMode::moveCursor(Direction direction)
 {

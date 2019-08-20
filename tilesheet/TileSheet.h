@@ -1,6 +1,7 @@
 #pragma once
 
 #include <boost/dynamic_bitset.hpp>
+#include <unordered_set>
 
 #include "types/Color.h"
 #include "types/Vec2.h"
@@ -73,6 +74,11 @@ public:
                             RealVec2 lrCoord,
                             RealVec2 llCoord);
 
+  bool hasTilesFor(std::string category);
+  bool needToLoadFilesFor(std::string category);
+  UintVec2 const& getTileSheetCoords(std::string category);
+  void loadViewResourcesFor(std::string category);
+
 protected:
   /// Return bitset index based on coordinates.
   unsigned int getIndex(UintVec2 coords);
@@ -91,7 +97,6 @@ protected:
   /// @todo This is an extremely naive algorithm and can definitely be optimized.
   void markTilesUsed(UintVec2 upper_left_corner, UintVec2 size);
 
-
 private:
   sf::Texture m_texture;
   sf::Image m_image;  // required for stuff like SFGUI that can't access textures directly
@@ -99,4 +104,9 @@ private:
   UintVec2 m_tileSize;
   boost::dynamic_bitset<size_t> m_used; // size_t gets rid of 64-bit compile warning
 
+  /// A map associating entity category names with tilesheet coordinates.
+  std::unordered_map<std::string, UintVec2> m_tileCoords;
+
+  /// A set indicating which categories we've already tried to load.
+  std::unordered_set<std::string> m_triedToLoad;
 };

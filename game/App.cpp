@@ -84,6 +84,7 @@ App::App(sf::RenderWindow& appWindow, sfg::SFGUI& sfgui, sfg::Desktop& desktop)
   SET_UP_LOGGER("Map",                false);
   SET_UP_LOGGER("MapFactory",         false);
   SET_UP_LOGGER("MapGenerator",       false);
+  SET_UP_LOGGER("Object",             true);
   SET_UP_LOGGER("Narrator",           false);
   SET_UP_LOGGER("PlayerHandler",      false);
   SET_UP_LOGGER("Property",           false);
@@ -106,9 +107,6 @@ App::App(sf::RenderWindow& appWindow, sfg::SFGUI& sfgui, sfg::Desktop& desktop)
 
   // Create the app texture for off-screen composition.
   m_appTexture->create(m_appWindow.getSize().x, m_appWindow.getSize().y);
-
-  // Create the GUI desktop.
-  m_guiDesktop.reset(NEW metagui::Desktop(*this, "Desktop", m_appWindow.getSize()));
 
   // Create the default fonts.
   m_fontDefault.reset(NEW sf::Font());
@@ -155,7 +153,10 @@ App::App(sf::RenderWindow& appWindow, sfg::SFGUI& sfgui, sfg::Desktop& desktop)
   /// @todo Change this so language can be specified.
   Config::strings().loadFile(resourcesPath + "/strings.en");
 
-  /// @note Standard map views provider creation has been moved to AppStateGameMode.
+  // Create the tilesheet.
+  auto tileSize = config.get("graphics-tile-size");
+  auto textureSize = config.get("tilesheet-texture-size");
+  m_tileSheet.reset(NEW TileSheet(tileSize, textureSize));
 
   // Get the state machine.
   StateMachine& sm = *m_stateMachine;
@@ -177,7 +178,6 @@ App::App(sf::RenderWindow& appWindow, sfg::SFGUI& sfgui, sfg::Desktop& desktop)
 App::~App()
 {
   m_stateMachine.reset();
-  m_guiDesktop.reset();
   m_appWindow.close();
   s_instance = nullptr;
 }
@@ -334,11 +334,6 @@ sf::Font & App::fontDefaultUnicode()
 sf::Shader & App::shader()
 {
   return *m_shader;
-}
-
-metagui::Desktop & App::guiDesktop()
-{
-  return *m_guiDesktop;
 }
 
 TileSheet & App::tileSheet()

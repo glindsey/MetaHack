@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "views/MapTileStandard2DView.h"
+#include "views/MapTileView2D.h"
 
 #include "components/ComponentManager.h"
 #include "config/Bible.h"
@@ -14,23 +14,24 @@
 #include "types/Color.h"
 #include "types/ShaderEffect.h"
 #include "utilities/RNGUtils.h"
-#include "views/Standard2DGraphicViews.h"
 
-std::string MapTileStandard2DView::getViewName()
+std::string MapTileView2D::getViewName()
 {
   return "standard2D";
 }
 
-MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile,
-                                             Standard2DGraphicViews& views)
+MapTileView2D::MapTileView2D(MapTile& map_tile)
   :
   MapTileView(map_tile),
-  m_tileOffset{ 0 }, //m_tileOffset{ pick_uniform(0, 4) },
-  m_views{ views }
+  m_tileOffset{ 0 } //m_tileOffset{ pick_uniform(0, 4) }
 {
 }
 
-UintVec2 MapTileStandard2DView::getFloorTileSheetCoords() const
+MapTileView2D::~MapTileView2D()
+{
+}
+
+UintVec2 MapTileView2D::getFloorTileSheetCoords() const
 {
   /// @todo Deal with selecting one of the other tiles.
   auto entity = getMapTile().getFloorEntity();
@@ -38,13 +39,13 @@ UintVec2 MapTileStandard2DView::getFloorTileSheetCoords() const
   UintVec2 offset;
 
   // Get tile coordinates on the sheet.
-  UintVec2 start_coords = m_views.getTileSheetCoords(COMPONENTS.category[entity]);
+  UintVec2 start_coords = the_tilesheet.getTileSheetCoords(COMPONENTS.category[entity]);
 
   UintVec2 tile_coords(start_coords.x + m_tileOffset, start_coords.y);
   return tile_coords;
 }
 
-UintVec2 MapTileStandard2DView::getSpaceTileSheetCoords() const
+UintVec2 MapTileView2D::getSpaceTileSheetCoords() const
 {
   /// @todo Deal with selecting one of the other tiles.
   auto entity = getMapTile().getSpaceEntity();
@@ -52,17 +53,17 @@ UintVec2 MapTileStandard2DView::getSpaceTileSheetCoords() const
   UintVec2 offset;
 
   // Get tile coordinates on the sheet.
-  UintVec2 start_coords = m_views.getTileSheetCoords(COMPONENTS.category[entity]);
+  UintVec2 start_coords = the_tilesheet.getTileSheetCoords(COMPONENTS.category[entity]);
 
   UintVec2 tile_coords(start_coords.x + m_tileOffset, start_coords.y);
   return tile_coords;
 }
 
-/// @todo Instead of repeating this method in EntityStandard2DView, call the view from here.
-UintVec2 MapTileStandard2DView::getEntityTileSheetCoords(EntityId entity, int frame) const
+/// @todo Instead of repeating this method in EntityView2D, call the view from here.
+UintVec2 MapTileView2D::getEntityTileSheetCoords(EntityId entity, int frame) const
 {
   /// Get tile coordinates on the sheet.
-  UintVec2 start_coords = m_views.getTileSheetCoords(COMPONENTS.category[entity]);
+  UintVec2 start_coords = the_tilesheet.getTileSheetCoords(COMPONENTS.category[entity]);
 
   /// Call the Lua function to get the offset (tile to choose).
   UintVec2 offset = GAME.lua().callEntityFunction("get_tile_offset", entity, frame, UintVec2(0, 0));
@@ -72,7 +73,7 @@ UintVec2 MapTileStandard2DView::getEntityTileSheetCoords(EntityId entity, int fr
 
   return tile_coords;
 }
-void MapTileStandard2DView::addTileVertices(EntityId viewer,
+void MapTileView2D::addTileVertices(EntityId viewer,
                                             sf::VertexArray& horizVertices,
                                             sf::VertexArray& vertVertices,
                                             sf::VertexArray& memoryVertices,
@@ -99,7 +100,7 @@ void MapTileStandard2DView::addTileVertices(EntityId viewer,
   }
 }
 
-void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
+void MapTileView2D::addMemoryVerticesTo(sf::VertexArray& vertices,
                                                 EntityId viewer)
 {
   if (!COMPONENTS.position.existsFor(viewer) ||
@@ -141,7 +142,7 @@ void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
     std::string category = components["category"].get<std::string>();
 
     // Bail if the object has no associated tiles.
-    if (!m_views.hasTilesFor(category)) return;
+    if (!the_tilesheet.hasTilesFor(category)) return;
 
     if (components.count("appearance") != 0)
     {
@@ -159,16 +160,16 @@ void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
 
     /// @todo Call a script to handle selecting a tile other than the one
     ///       in the upper-left corner.
-    UintVec2 tileCoords = m_views.getTileSheetCoords(category);
+    UintVec2 tileCoords = the_tilesheet.getTileSheetCoords(category);
 
-    m_views.getTileSheet().addQuad(vertices,
-                                   tileCoords, Color::White,
-                                   vNW, vNE,
-                                   vSW, vSE);
+    the_tilesheet.addQuad(vertices,
+                          tileCoords, Color::White,
+                          vNW, vNE,
+                          vSW, vSE);
   }
 }
 
-void MapTileStandard2DView::addHorizontalSurfaceVerticesTo(sf::VertexArray& vertices,
+void MapTileView2D::addHorizontalSurfaceVerticesTo(sf::VertexArray& vertices,
                                                            EntityId viewer,
                                                            Systems::Lighting& lighting)
 {
@@ -219,29 +220,29 @@ void MapTileStandard2DView::addHorizontalSurfaceVerticesTo(sf::VertexArray& vert
   if (!opaque)
   {
     UintVec2 floorTileCoords = getFloorTileSheetCoords();
-    m_views.getTileSheet().addGradientQuadTo(vertices, floorTileCoords,
-                                             vNW, vNE,
-                                             vSW, vSE,
-                                             Color::White,
-                                             lightNW, lightN, lightNE,
-                                             lightW, light, lightE,
-                                             lightSW, lightS, lightSE);
+    the_tilesheet.addGradientQuadTo(vertices, floorTileCoords,
+                                    vNW, vNE,
+                                    vSW, vSE,
+                                    Color::White,
+                                    lightNW, lightN, lightNE,
+                                    lightW, light, lightE,
+                                    lightSW, lightS, lightSE);
   }
 
   if (!transparent)
   {
     UintVec2 spaceTileCoords = getSpaceTileSheetCoords();
-    m_views.getTileSheet().addGradientQuadTo(vertices, spaceTileCoords,
-                                             vNW, vNE,
-                                             vSW, vSE,
-                                             Color::White,
-                                             lightNW, lightN, lightNE,
-                                             lightW, light, lightE,
-                                             lightSW, lightS, lightSE);
+    the_tilesheet.addGradientQuadTo(vertices, spaceTileCoords,
+                                    vNW, vNE,
+                                    vSW, vSE,
+                                    Color::White,
+                                    lightNW, lightN, lightNE,
+                                    lightW, light, lightE,
+                                    lightSW, lightS, lightSE);
   }
 }
 
-void MapTileStandard2DView::addEntitiesVertices(EntityId viewer,
+void MapTileView2D::addEntitiesVertices(EntityId viewer,
                                                 sf::VertexArray & vertices,
                                                 Systems::Lighting* lighting,
                                                 int frame)
@@ -272,7 +273,7 @@ void MapTileStandard2DView::addEntitiesVertices(EntityId viewer,
   }
 }
 
-void MapTileStandard2DView::addEntityVertices(EntityId entityId,
+void MapTileView2D::addEntityVertices(EntityId entityId,
                                               sf::VertexArray& vertices,
                                               Systems::Lighting* lighting,
                                               int frame)
@@ -287,7 +288,7 @@ void MapTileStandard2DView::addEntityVertices(EntityId entityId,
   if (!COMPONENTS.position.existsFor(entityId)) return;
 
   // If this entity doesn't have associated tiles, bail.
-  if (!m_views.hasTilesFor(category)) return;
+  if (!the_tilesheet.hasTilesFor(category)) return;
 
   auto& position = COMPONENTS.position[entityId];
   IntVec2 const& coords = position.coords();
@@ -310,14 +311,14 @@ void MapTileStandard2DView::addEntityVertices(EntityId entityId,
   RealVec2 vNE(location.x + ts2.x, location.y - ts2.y);
   UintVec2 tileCoords = getEntityTileSheetCoords(entityId, frame);
 
-  m_views.getTileSheet().addQuad(vertices,
-                                 tileCoords, thingColor,
-                                 vNW, vNE,
-                                 vSW, vSE);
+  the_tilesheet.addQuad(vertices,
+                        tileCoords, thingColor,
+                        vNW, vNE,
+                        vSW, vSE);
 }
 
 
-void MapTileStandard2DView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertices,
+void MapTileView2D::addVerticalSurfaceVerticesTo(sf::VertexArray& vertices,
                                                          EntityId viewer,
                                                          Systems::Lighting* lighting)
 {
@@ -505,13 +506,13 @@ void MapTileStandard2DView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
       vSE.x += ws.x;
     }
 
-    m_views.getTileSheet().addGradientQuadTo(vertices, tileSheetCoords,
-                                             vTileNW, vTileNE,
-                                             vSW, vSE,
-                                             Color::White,
-                                             wallNColorW, wallNColorC, wallNColorE,
-                                             wallNColorW, wallNColorC, wallNColorE,
-                                             wallNColorW, wallNColorC, wallNColorE);
+    the_tilesheet.addGradientQuadTo(vertices, tileSheetCoords,
+                                    vTileNW, vTileNE,
+                                    vSW, vSE,
+                                    Color::White,
+                                    wallNColorW, wallNColorC, wallNColorE,
+                                    wallNColorW, wallNColorC, wallNColorE,
+                                    wallNColorW, wallNColorC, wallNColorE);
   }
 
   // EAST WALL
@@ -537,13 +538,13 @@ void MapTileStandard2DView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
       vSW.y += ws.y;
     }
 
-    m_views.getTileSheet().addGradientQuadTo(vertices, tileSheetCoords,
-                                             vNW, vTileNE,
-                                             vSW, vTileSE,
-                                             Color::White,
-                                             wallEColorN, wallEColorN, wallEColorN,
-                                             wallEColorC, wallEColorC, wallEColorC,
-                                             wallEColorS, wallEColorS, wallEColorS);
+    the_tilesheet.addGradientQuadTo(vertices, tileSheetCoords,
+                                    vNW, vTileNE,
+                                    vSW, vTileSE,
+                                    Color::White,
+                                    wallEColorN, wallEColorN, wallEColorN,
+                                    wallEColorC, wallEColorC, wallEColorC,
+                                    wallEColorS, wallEColorS, wallEColorS);
   }
 
   // SOUTH WALL
@@ -569,13 +570,13 @@ void MapTileStandard2DView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
       vNE.x += ws.x;
     }
 
-    m_views.getTileSheet().addGradientQuadTo(vertices, tileSheetCoords,
-                                             vNW, vNE,
-                                             vTileSW, vTileSE,
-                                             Color::White,
-                                             wallSColorW, wallSColorC, wallSColorE,
-                                             wallSColorW, wallSColorC, wallSColorE,
-                                             wallSColorW, wallSColorC, wallSColorE);
+    the_tilesheet.addGradientQuadTo(vertices, tileSheetCoords,
+                                    vNW, vNE,
+                                    vTileSW, vTileSE,
+                                    Color::White,
+                                    wallSColorW, wallSColorC, wallSColorE,
+                                    wallSColorW, wallSColorC, wallSColorE,
+                                    wallSColorW, wallSColorC, wallSColorE);
   }
 
   // WEST WALL
@@ -601,17 +602,17 @@ void MapTileStandard2DView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
       vSE.y += ws.y;
     }
 
-    m_views.getTileSheet().addGradientQuadTo(vertices, tileSheetCoords,
-                                             vTileNW, vNE,
-                                             vTileSW, vSE,
-                                             Color::White,
-                                             wallWColorN, wallWColorN, wallWColorN,
-                                             wallWColorC, wallWColorC, wallWColorC,
-                                             wallWColorS, wallWColorS, wallWColorS);
+    the_tilesheet.addGradientQuadTo(vertices, tileSheetCoords,
+                                    vTileNW, vNE,
+                                    vTileSW, vSE,
+                                    Color::White,
+                                    wallWColorN, wallWColorN, wallWColorN,
+                                    wallWColorC, wallWColorC, wallWColorC,
+                                    wallWColorS, wallWColorS, wallWColorS);
   }
 }
 
-bool MapTileStandard2DView::onEvent(Event const& event)
+bool MapTileView2D::onEvent(Event const& event)
 {
   return false;
 }

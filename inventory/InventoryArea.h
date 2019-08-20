@@ -4,7 +4,6 @@
 #include <SFGUI/Widgets.hpp>
 #include <memory>
 
-#include "GUIWindow.h"
 #include "inventory/InventorySlot.h"
 #include "views/EntityCollectionGUIView.h"
 
@@ -15,25 +14,28 @@ class EntityId;
 class GameState;
 class InventorySelection;
 
-class InventoryArea :
-  public metagui::Window
+class InventoryArea
+  :
+  public Object
 {
 public:
-  explicit InventoryArea(metagui::Desktop& mgDesktop,
+  explicit InventoryArea(sf::RenderWindow& renderWindow,
                          sfg::SFGUI& sfgui,
                          sfg::Desktop& desktop,
                          std::string name,
                          InventorySelection& inventory_selection,
-                         sf::IntRect dimensions,
                          GameState& gameState);
   virtual ~InventoryArea();
 
 protected:
-  virtual void drawContents_(sf::RenderTexture& texture, int frame) override;
+  virtual void drawContents_(sf::RenderTexture& texture, int frame);
 
-  virtual bool onEvent_V(Event const& event) override;
+  virtual bool onEvent(Event const& event);
 
 private:
+  /// Reference to the render window.
+  sf::RenderWindow& m_renderWindow;
+
   /// Reference to the SFGUI API.
   sfg::SFGUI& m_sfgui;
 

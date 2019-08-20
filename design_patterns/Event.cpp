@@ -11,10 +11,10 @@ EventID Event::getId() const
   return id;
 }
 
-void Event::serialize(std::ostream& os) const
+void Event::printToStream(std::ostream& os) const
 {
-  Serializable::serialize(os);
+  Printable::printToStream(os);
   os << " | subject: <";
-  subject->serialize(os);
+  subject->printToStream(os);
   os << ">";
 };

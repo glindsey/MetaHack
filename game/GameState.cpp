@@ -9,8 +9,6 @@
 #include "map/Map.h"
 #include "map/MapFactory.h"
 #include "objects/GameLog.h"
-#include "services/Service.h"
-#include "services/IGraphicViews.h"
 #include "utilities/JSONUtils.h"
 
 

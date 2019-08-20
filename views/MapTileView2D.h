@@ -7,8 +7,7 @@
 #include "views/MapTileView.h"
 
 #include "tilesheet/TileSheet.h"
-#include "views/EntityStandard2DView.h"
-#include "views/Standard2DGraphicViews.h"
+#include "views/EntityView2D.h"
 
 // Forward declarations
 namespace Systems
@@ -17,20 +16,19 @@ namespace Systems
 }
 
 /// Class representing the standard 2D (pseudo-3D) view of a MapTile object.
-class MapTileStandard2DView : public MapTileView
+class MapTileView2D : public MapTileView
 {
-  friend class MapStandard2DView;
-  friend class Standard2DGraphicViews;
+  friend class MapView2D;
 
 public:
+  /// Constructor.
+  MapTileView2D(MapTile& mapTile);
+
+  virtual ~MapTileView2D();
 
   virtual std::string getViewName() override;
 
 protected:
-  /// Constructor.
-  MapTileStandard2DView(MapTile& mapTile, 
-                        Standard2DGraphicViews& views);
-
   /// Return the coordinates of the tile's floor entity on the tilesheet.
   UintVec2 getFloorTileSheetCoords() const;
 
@@ -44,7 +42,7 @@ protected:
   /// @param horizVertices Array to add horizontal surface vertices to.
   /// @param vertVertices Array to add vertical surface vertices to.
   /// @param memoryVertices Array to add memory vertices to.
-  void addTileVertices(EntityId viewer, 
+  void addTileVertices(EntityId viewer,
                        sf::VertexArray& horizVertices,
                        sf::VertexArray& vertVertices,
                        sf::VertexArray& memoryVertices,
@@ -70,7 +68,7 @@ protected:
 
   /// Add the vertices for the entity specified.
   /// @todo Move into a Entity view.
-  void addEntityVertices(EntityId entity, 
+  void addEntityVertices(EntityId entity,
                          sf::VertexArray& vertices,
                          Systems::Lighting* lighting,
                          int frame);
@@ -89,7 +87,4 @@ protected:
 private:
   /// Random tile offset.
   int m_tileOffset;
-
-  /// Reference to parent views object.
-  Standard2DGraphicViews& m_views;
 };

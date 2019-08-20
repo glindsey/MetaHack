@@ -3,12 +3,12 @@
 #include <boost/filesystem.hpp>
 
 #include "config/Paths.h"
+#include "game/App.h"
 #include "game/GameState.h" // needed for LUA
 #include "lua/LuaObject.h"
-#include "services/Service.h"
-#include "services/IGraphicViews.h"
 #include "utilities/JSONUtils.h"
 #include "utilities/StringTransforms.h"
+#include "tilesheet/TileSheet.h"
 
 // Namespace aliases
 namespace fs = boost::filesystem;
@@ -110,7 +110,7 @@ namespace Config
         std::cerr << "BREAK" << std::endl;
       }
 
-      S<IGraphicViews>().loadViewResourcesFor(name);
+      the_tilesheet.loadViewResourcesFor(name);
     }
   }
 

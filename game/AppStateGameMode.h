@@ -16,6 +16,7 @@ namespace Actions
 class Direction;
 class EntityId;
 class GameState;
+class InventoryArea;
 class InventorySelection;
 class MapView;
 class StatusArea;
@@ -58,13 +59,14 @@ public:
   Systems::Manager& systems();
 
 protected:
-  void renderMap(sf::RenderTexture& texture, int frame);
+  virtual bool render(sf::RenderTexture& texture, int frame) override;
+
   bool handle_key_press(UIEvents::EventKeyPressed const& key);
   bool handle_mouse_wheel(UIEvents::EventMouseWheelMoved const& wheel);
-  sf::IntRect calcMessageLogDims();
+  //sf::IntRect calcMessageLogDims();
   void resetInventorySelection();
-  sf::IntRect calcStatusAreaDims();
-  sf::IntRect calcInventoryDims();
+  //sf::IntRect calcStatusAreaDims();
+  //sf::IntRect calcInventoryDims();
   bool moveCursor(Direction direction);
   bool handleKeyPressTargetSelection(EntityId player, UIEvents::EventKeyPressed const& key);
   bool handleKeyPressCursorLook(EntityId player, UIEvents::EventKeyPressed const& key);
@@ -86,8 +88,14 @@ private:
   /// The MessageLogView instance.
   std::unique_ptr<MessageLogView> m_messageLogView;
 
+  /// The InventoryArea instance.
+  std::unique_ptr<InventoryArea> m_inventoryArea;
+
   /// The StatusArea instance.
   std::unique_ptr<StatusArea> m_statusArea;
+
+  /// The tilesheet.
+  std::unique_ptr<TileSheet> m_tileSheet;
 
   /// The current game state.
   std::unique_ptr<GameState> m_gameState;
@@ -95,9 +103,8 @@ private:
   /// The manager of all game systems.
   std::unique_ptr<Systems::Manager> m_systemManager;
 
-  /// Reference to the current MapView.
-  MapView* m_mapView;
-  //std::unique_ptr<MapView> m_mapView;
+  /// The current MapView.
+  std::unique_ptr<MapView> m_mapView;
 
   /// The current InventorySelection.
   std::unique_ptr<InventorySelection> m_inventorySelection;

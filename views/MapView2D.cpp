@@ -1,37 +1,36 @@
 #include "stdafx.h"
 
-#include "views/MapStandard2DView.h"
+#include "views/MapView2D.h"
 
 #include "config/Settings.h"
 #include "game/App.h"
-#include "services/Service.h"
+#include "map/Map.h"
 #include "tilesheet/TileSheet.h"
 #include "types/ShaderEffect.h"
 #include "utilities/New.h"
-#include "views/MapTileStandard2DView.h"
-#include "views/Standard2DGraphicViews.h"
+#include "views/MapTileView2D.h"
 
-MapStandard2DView::MapStandard2DView(metagui::Desktop& desktop,
-                                     std::string name,
-                                     Map& map,
-                                     UintVec2 size,
-                                     Standard2DGraphicViews& views)
+MapView2D::MapView2D(std::string name,
+                     Map& map)
   :
-  MapView(desktop, name, map, size),
-  m_views(views)
+  MapView(name, map)
 {
   resetCachedRenderData();
 
   // Create a grid of tile views, each tied to a map tile.
-  m_map_tile_views.reset(new Grid2D<MapTileStandard2DView>(map.getSize(),
-                                                           [&](IntVec2 coords) -> MapTileStandard2DView*
+  m_map_tile_views.reset(new Grid2D<MapTileView2D>(map.getSize(),
+                         [&](IntVec2 coords) -> MapTileView2D*
   {
-    return NEW MapTileStandard2DView(map.getTile(coords), views);
+    return NEW MapTileView2D(map.getTile(coords));
   }));
 
 }
 
-void MapStandard2DView::updateTiles(EntityId viewer, Systems::Lighting& lighting)
+MapView2D::~MapView2D()
+{
+}
+
+void MapView2D::updateTiles(EntityId viewer, Systems::Lighting& lighting)
 {
   auto& map = getMap();
   auto& map_size = map.getSize();
@@ -56,7 +55,7 @@ void MapStandard2DView::updateTiles(EntityId viewer, Systems::Lighting& lighting
   }
 }
 
-void MapStandard2DView::updateEntities(EntityId viewer,
+void MapView2D::updateEntities(EntityId viewer,
                                        Systems::Lighting& lighting,
                                        int frame)
 {
@@ -77,13 +76,13 @@ void MapStandard2DView::updateEntities(EntityId viewer,
   }
 }
 
-bool MapStandard2DView::renderMap(sf::RenderTexture& texture, int frame)
+bool MapView2D::renderMap(sf::RenderTexture& texture, int frame)
 {
   the_shader.setUniform("texture", sf::Shader::CurrentTexture);
 
   sf::RenderStates render_states = sf::RenderStates::Default;
   render_states.shader = &the_shader;
-  render_states.texture = &(m_views.getTileSheet().getTexture());
+  render_states.texture = &(the_tilesheet.getTexture());
 
   the_shader.setUniform("effect", ShaderEffect::Lighting);
   texture.draw(m_mapHorizVertices, render_states);
@@ -97,7 +96,7 @@ bool MapStandard2DView::renderMap(sf::RenderTexture& texture, int frame)
   return true;
 }
 
-void MapStandard2DView::drawHighlight(sf::RenderTarget& target,
+void MapView2D::drawHighlight(sf::RenderTarget& target,
                                        RealVec2 location,
                                        Color fgColor,
                                        Color bgColor,
@@ -127,18 +126,18 @@ void MapStandard2DView::drawHighlight(sf::RenderTarget& target,
   target.draw(boxShape);
 }
 
-std::string MapStandard2DView::getViewName()
+std::string MapView2D::getViewName()
 {
   return "standard2D";
 }
 
 
-void MapStandard2DView::drawPreChildren_(sf::RenderTexture & texture, int frame)
+void MapView2D::drawPreChildren_(sf::RenderTexture & texture, int frame)
 {
   /// @todo WRITE ME
 }
 
-void MapStandard2DView::resetCachedRenderData()
+void MapView2D::resetCachedRenderData()
 {
   auto& map = getMap();
   auto map_size = map.getSize();
