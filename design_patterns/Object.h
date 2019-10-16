@@ -11,6 +11,7 @@
 #include "Printable.h"
 
 // Forward declarations
+using EventSet = std::unordered_set<EventID>;
 using ObserversSet = std::unordered_set<Object*>;
 using EventObservers = std::unordered_map<EventID, ObserversSet>;
 using EventObserversPair = std::pair<EventID, ObserversSet>;
@@ -28,8 +29,8 @@ public:
     void printToStream(std::ostream& o) const;
   };
 
-  Object(std::unordered_set<EventID> const events);
-  Object(std::unordered_set<EventID> const events, std::string name);
+  Object(EventSet const events);
+  Object(EventSet const events, std::string name);
   virtual ~Object();
 
   std::string const& getName();

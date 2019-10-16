@@ -390,6 +390,16 @@ set(PROJECT_SOURCES_SFGUI_EXTENSIONS
 set(PROJECT_INCLUDES_SFGUI_EXTENSIONS
     ${PROJECT_SOURCE_DIR}/sfgui_extensions/EntryPlus.hpp)
 
+set(PROJECT_SOURCES_SCENE_GRAPH
+    ${PROJECT_SOURCE_DIR}/scene_graph/SceneNode.cpp
+    ${PROJECT_SOURCE_DIR}/scene_graph/Artist.cpp
+    ${PROJECT_SOURCE_DIR}/scene_graph/EventProcessor.cpp)
+
+set(PROJECT_INCLUDES_SCENE_GRAPH
+    ${PROJECT_SOURCE_DIR}/scene_graph/SceneNode.h
+    ${PROJECT_SOURCE_DIR}/scene_graph/Artist.h
+    ${PROJECT_SOURCE_DIR}/scene_graph/EventProcessor.h)
+
 set(PROJECT_SOURCES_SYSTEMS
     ${PROJECT_SOURCE_DIR}/systems/Manager.cpp
     ${PROJECT_SOURCE_DIR}/systems/SystemChoreographer.cpp
@@ -496,6 +506,7 @@ set(PROJECT_SOURCES
     ${PROJECT_SOURCES_INVENTORY}
     ${PROJECT_SOURCES_MAP}
     ${PROJECT_SOURCES_OBJECTS}
+    ${PROJECT_SOURCES_SCENE_GRAPH}
     ${PROJECT_SOURCES_SFGUI_EXTENSIONS}
     ${PROJECT_SOURCES_SYSTEMS}
     ${PROJECT_SOURCES_TYPES}
@@ -514,6 +525,7 @@ set(PROJECT_INCLUDES
     ${PROJECT_INCLUDES_INVENTORY}
     ${PROJECT_INCLUDES_MAP}
     ${PROJECT_INCLUDES_OBJECTS}
+    ${PROJECT_INCLUDES_SCENE_GRAPH}
     ${PROJECT_INCLUDES_SFGUI_EXTENSIONS}
     ${PROJECT_INCLUDES_SYSTEMS}
     ${PROJECT_INCLUDES_TYPES}
@@ -578,6 +590,10 @@ source_group("Objects"
              FILES
              ${PROJECT_SOURCES_OBJECTS}
              ${PROJECT_INCLUDES_OBJECTS})
+source_group("Scene Graph"
+             FILES
+             ${PROJECT_SOURCES_SCENE_GRAPH}
+             ${PROJECT_INCLUDES_SCENE_GRAPH})
 source_group("SFGUI Extensions"
              FILES
              ${PROJECT_SOURCES_SFGUI_EXTENSIONS}

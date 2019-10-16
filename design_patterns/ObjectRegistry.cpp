@@ -13,7 +13,7 @@ ObjectRegistry::~ObjectRegistry()
 
 bool ObjectRegistry::add(Object* obj)
 {
-  if (contains(obj)) return false;
+  if ((obj == nullptr) || (contains(obj))) return false;
 
   boost::upgrade_lock<boost::shared_mutex> lock(m_registryMutex);
   boost::upgrade_to_unique_lock<boost::shared_mutex> writeLock(lock);
@@ -24,7 +24,7 @@ bool ObjectRegistry::add(Object* obj)
 
 bool ObjectRegistry::remove(Object* obj)
 {
-  if (!contains(obj)) return false;
+  if ((obj == nullptr) || (!contains(obj))) return false;
 
   boost::upgrade_lock<boost::shared_mutex> lock(m_registryMutex);
   boost::upgrade_to_unique_lock<boost::shared_mutex> writeLock(lock);
@@ -35,6 +35,8 @@ bool ObjectRegistry::remove(Object* obj)
 
 bool ObjectRegistry::contains(Object* obj)
 {
+  if (obj == nullptr) return false;
+
   boost::shared_lock<boost::shared_mutex> readLock(m_registryMutex);
 
   return (m_registry.count(obj) != 0);

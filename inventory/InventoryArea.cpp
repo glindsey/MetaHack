@@ -325,7 +325,7 @@ bool InventoryArea::onEvent(Event const& event)
   }
 
   /// @todo We'll also have to handle when the viewed collection (i.e. the inventory) changes.
-
+  ///       Also, this is horribly, horribly slow right now. Can it be sped up? Who knows?
   if (recreateInventoryView == true)
   {
     CLOG(TRACE, "InventoryArea") << "Got event " << event;

@@ -99,6 +99,77 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "scene_graph/Artist.cpp",
+			"settings":
+			{
+				"buffer_size": 148,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "scene_graph/Artist.h",
+			"settings":
+			{
+				"buffer_size": 222,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "CMakeLists.txt",
+			"settings":
+			{
+				"buffer_size": 25156,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "scene_graph/EventProcessor.cpp",
+			"settings":
+			{
+				"buffer_size": 188,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "scene_graph/EventProcessor.h",
+			"settings":
+			{
+				"buffer_size": 251,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "text/More thoughts on architecture.txt",
+			"settings":
+			{
+				"buffer_size": 1876,
+				"encoding": "UTF-8",
+				"line_ending": "Unix",
+				"name": "More thoughts on architecture"
+			}
+		},
+		{
+			"file": "scene_graph/SceneNode.cpp",
+			"settings":
+			{
+				"buffer_size": 2632,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "scene_graph/SceneNode.h",
+			"settings":
+			{
+				"buffer_size": 3051,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -111,6 +182,26 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"mark",
+				"Set Syntax: Markdown"
+			],
+			[
+				"dot",
+				"Set Syntax: Graphviz (DOT)"
+			],
+			[
+				"markdown",
+				"Set Syntax: Markdown"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
 			[
 				"CMakeF",
 				"CMake Format: Format Selection"
@@ -128,15 +219,7 @@
 				"Set Syntax: CMake"
 			],
 			[
-				"mark",
-				"Set Syntax: Markdown"
-			],
-			[
 				"Markdown",
-				"Set Syntax: Markdown"
-			],
-			[
-				"markdown",
 				"Set Syntax: Markdown"
 			],
 			[
@@ -146,10 +229,6 @@
 			[
 				"sort",
 				"SortList: Sort List"
-			],
-			[
-				"remove",
-				"Package Control: Remove Package"
 			],
 			[
 				"install package control",
@@ -177,74 +256,88 @@
 	"expanded_folders":
 	[
 		"/home/greglindsey/personal/projects/MetaHack",
-		"/home/greglindsey/personal/projects/MetaHack/build",
-		"/home/greglindsey/personal/projects/MetaHack/config",
-		"/home/greglindsey/personal/projects/MetaHack/external",
-		"/home/greglindsey/personal/projects/MetaHack/game",
-		"/home/greglindsey/personal/projects/MetaHack/map",
-		"/home/greglindsey/personal/projects/MetaHack/services",
-		"/home/greglindsey/personal/projects/MetaHack/types"
+		"/home/greglindsey/personal/projects/MetaHack/scene_graph",
+		"/home/greglindsey/personal/projects/MetaHack/state_machine",
+		"/home/greglindsey/personal/projects/MetaHack/text",
+		"/home/greglindsey/personal/projects/MetaHack/types",
+		"/home/greglindsey/personal/projects/MetaHack/views"
 	],
 	"file_history":
 	[
-		"/home/greglindsey/personal/projects/MetaHack/tilesheet/TileSheet.h",
-		"/home/greglindsey/personal/projects/MetaHack/tilesheet/TileSheet.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game_windows/StatusArea.h",
-		"/home/greglindsey/personal/projects/MetaHack/game_windows/StatusArea.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.h",
-		"/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/MapView2D.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/MapView2D.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/MapView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/MapView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/MapTileView2D.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/MapTileView2D.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/inventory/InventoryArea.h",
-		"/home/greglindsey/personal/projects/MetaHack/inventory/InventoryArea.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUIDesktop.h",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUIDesktop.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIListView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIListView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/CMakeLists.txt",
-		"/home/greglindsey/personal/projects/MetaHack/config/Bible.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateSplashScreen.h",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateSplashScreen.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateMainMenu.h",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateMainMenu.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.h",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppState.h",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppState.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/App.h",
-		"/home/greglindsey/personal/projects/MetaHack/game/App.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUIWindow.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/MapTileView.h",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUITitleBar.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUIObject.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/GameState.h",
-		"/home/greglindsey/personal/projects/MetaHack/game/GameState.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityView2D.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityView2D.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUILabel.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/services/IGraphicViews.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/Standard2DGraphicViews.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/Standard2DGraphicViews.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/NullGraphicViews.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/MapTileStandard2DView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/MapTileStandard2DView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/MapStandard2DView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/systems/SystemGeometry.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/utilities/Shortcuts.h",
+		"/home/greglindsey/personal/projects/MetaHack/scene_graph/Artist.h",
+		"/home/greglindsey/personal/projects/MetaHack/design_patterns/AssertHelper.h",
+		"/home/greglindsey/personal/projects/MetaHack/design_patterns/AssertHelper.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/map/Map.h",
+		"/home/greglindsey/personal/projects/MetaHack/text/SceneGraph.dot",
 		"/home/greglindsey/personal/projects/MetaHack/design_patterns/ObjectRegistry.h",
+		"/home/greglindsey/personal/projects/MetaHack/design_patterns/ObjectRegistry.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Object.h",
 		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Object.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUIObject.h",
-		"/home/greglindsey/personal/projects/MetaHack/objects/GameLog.h",
-		"/home/greglindsey/personal/projects/MetaHack/objects/GameLog.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/design_patterns/ObjectPtr.h",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionAttack.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/include/stdafx.h",
+		"/home/greglindsey/personal/projects/MetaHack/game/App.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIListView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIListView.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIView.h",
+		"/home/greglindsey/personal/projects/MetaHack/inventory/InventoryArea.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/inventory/InventoryArea.h",
+		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Printable.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Printable.h",
+		"/home/greglindsey/personal/projects/MetaHack/scene_graph/SceneGraph.h",
+		"/home/greglindsey/personal/projects/MetaHack/lua/LuaObject.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/.gitignore",
+		"/home/greglindsey/personal/projects/MetaHack/suppressions.txt",
+		"/home/greglindsey/personal/projects/MetaHack/utilities/utilities.h",
+		"/home/greglindsey/personal/projects/MetaHack/types/types.h",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemSenseSight.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemNarrator.h",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemGeometry.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/components/modifiers/Physical.h",
+		"/home/greglindsey/personal/projects/MetaHack/pchheader.h",
+		"/home/greglindsey/personal/projects/MetaHack/maptile/MapTile.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/map/MapRoom.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/map/MapLRoom.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/map/MapGenerator.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/map/MapFeature.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/map/MapDonutRoom.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/map/MapDiamond.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/map/MapCorridor.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/systems/Manager.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/types/Gender.h",
+		"/home/greglindsey/personal/projects/MetaHack/types/Direction.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentTemplate.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentSenseSight.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentSapience.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentPosition.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentPhysical.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentOpenable.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentMobility.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentMatterState.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentMaterialFlags.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentMap.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentLockable.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentLightSource.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentHealth.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentGlobals.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentGender.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentEquippable.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentDigestiveSystem.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentCorrodible.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentCombustible.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentBodyparts.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentAppearance.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentAnimated.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentActivity.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/modifiers/Combustible.h",
+		"/home/greglindsey/personal/projects/MetaHack/types/Color.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/modifiers/Collection.h",
+		"/home/greglindsey/personal/projects/MetaHack/CMakeLists.txt",
+		"/home/greglindsey/personal/projects/MetaHack/types/Clamped.h",
+		"/home/greglindsey/personal/projects/MetaHack/types/BodyPart.h",
+		"/home/greglindsey/personal/projects/MetaHack/types/Beatitude.h",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionQueue.h",
+		"/home/greglindsey/personal/projects/MetaHack/actions/Action.h",
 		"/home/greglindsey/personal/projects/MetaHack/actions/ActionClose.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/actions/ActionDie.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/actions/ActionDrop.cpp",
@@ -266,54 +359,38 @@
 		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUnlock.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUnwield.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUse.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionWear.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/actions/ActionWait.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionWear.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/actions/ActionWield.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/lua/LuaFunctions-Global.h",
-		"/home/greglindsey/personal/projects/MetaHack/actions/Action.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/Action.h",
-		"/home/greglindsey/personal/projects/MetaHack/config/Bible.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/MessageLog.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/services/IMessageLog.h",
+		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Event.h",
+		"/home/greglindsey/personal/projects/MetaHack/components/ComponentMagicalBinding.h",
+		"/home/greglindsey/personal/projects/MetaHack/types/Vec2.h",
+		"/home/greglindsey/personal/projects/MetaHack/events/UIEvents.h",
+		"/home/greglindsey/personal/projects/MetaHack/tilesheet/TileSheet.h",
+		"/home/greglindsey/personal/projects/MetaHack/tilesheet/TileSheet.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemTimekeeper.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemThermodynamics.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/systems/SystemNarrator.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/lua/LuaObject.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/lua/LuaFunctions-Entity.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityStandard2DView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/entity/EntityFactory.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/config/Settings.h",
-		"/home/greglindsey/personal/projects/MetaHack/config/Settings.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/maptile/MapTile.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/map/Map.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityFancyAsciiView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/services/NullGameRules.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/IGameRules.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/FileSystemGameRules.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/FileSystemGameRules.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemMechanics.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemLuaLiaison.h",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemLuaLiaison.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemLighting.h",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemLighting.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemJanitor.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemGrimReaper.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemFluidics.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemEditor.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemDirector.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemChoreographer.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/config/Strings.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/MapTileFancyAsciiView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/MapFancyAsciiView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/services/IConfigSettings.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/IConfigSettings.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/FancyAsciiGraphicViews.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/services/FallbackConfigSettings.h",
-		"/home/greglindsey/personal/projects/MetaHack/config/Strings.h",
-		"/home/greglindsey/personal/projects/MetaHack/config/Paths.h",
-		"/home/greglindsey/personal/projects/MetaHack/config/Paths.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/services/Strings.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/services/Strings.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/NullStrings.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/IStrings.h",
-		"/home/greglindsey/personal/projects/MetaHack/include/stdafx.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/DefaultPaths.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/services/DefaultPaths.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/IPaths.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/services/IPaths.h",
-		"/home/greglindsey/personal/projects/MetaHack/config/Config.h",
-		"/home/greglindsey/personal/projects/MetaHack/config/Config.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/components/ComponentInventory.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/components/ComponentInventory.h",
-		"/home/greglindsey/personal/projects/MetaHack/components/ComponentManager.h",
-		"/home/greglindsey/personal/projects/MetaHack/systems/SystemNarrator.h",
+		"/home/greglindsey/personal/projects/MetaHack/src/stdafx.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/state_machine/StateMachine.h",
+		"/home/greglindsey/personal/projects/MetaHack/state_machine/StateMachine.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/state_machine/State.h",
+		"/home/greglindsey/personal/projects/MetaHack/state_machine/State.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/types/SpritePrototype.h",
+		"/home/greglindsey/personal/projects/MetaHack/config/Settings.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/properties/PropertyDictionary.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/components/modifiers/Physical.cpp"
 	],
 	"find":
@@ -338,6 +415,57 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"Assert",
+			"deque",
+			"Deque",
+			"deque",
+			"std::unordered_set<EventID>",
+			"ptr_container",
+			"instance",
+			"StaticText",
+			"DynamicText",
+			"IntegerRange",
+			"Could not find Lua function",
+			"SET_UP_LOGGER(\"Lua",
+			"InventoryArea",
+			"ModifiableInt",
+			"ModifiableBool",
+			"using json",
+			"pchheader.h",
+			"#include \"utilities/",
+			"include",
+			"CMAKE_MODULE_PATH",
+			"PROJECT_SOURCES_PCH",
+			"pchhead",
+			"#include \"pchheader.h\"",
+			"PROJECT_SOURCES_TYPES",
+			"#include \"types/",
+			"IntegerRange",
+			"#include \"types/",
+			"utilities/JSONUtils.h",
+			"EnumIterator.h",
+			"utilities/CommonFunctions.h",
+			"GetLetterKey.h",
+			"Gender.h",
+			"EntitySpecs.h",
+			"DirGrid.h",
+			"Direction.h",
+			"DequeMap.h",
+			"Clamped.h",
+			"BodyPart.h",
+			"Bodypart.h",
+			"Beatitude.h",
+			"Color.h",
+			"ModifiableBool",
+			"IntVec3",
+			"include(",
+			"#include \"stdafx.h\"",
+			"Serializable",
+			"toStringStream(",
+			"serialize(",
+			"serialize",
+			"toString",
+			"Serializable",
 			"handle_key_press",
 			"UIEvents::EventKeyPressed",
 			"handleSFMLEvent",
@@ -414,58 +542,7 @@
 			"S<IStrings>()",
 			"IStrings",
 			"#include \"services/IStrings.h\"\n",
-			"#include \"services/IStrings.h\"",
-			"IStrings",
-			"FileName",
-			"IPaths",
-			"DefaultPaths",
-			"EXPAND",
-			"InventorySlot",
-			"CloseHandle",
-			"ResizeHandle",
-			"CollapseHandle",
-			"CloseHandle",
-			"m_gameState.components",
-			"GAME.components",
-			"Got event",
-			"Object.cpp",
-			"NEW",
-			"demangle",
-			"addObserver",
-			"demangle",
-			"CLOG",
-			"SYSTEMS",
-			"\"StatusArea\"",
-			"  \n",
-			"doEventSubscriptions_V",
-			"IKeyBuffer",
-			"KeyBuffer",
-			"\"AppStateGameMode\"",
-			"\"GUI\"",
-			"MessageLogView",
-			"::id",
-			"onEvent_V",
-			"get_enter",
-			"m_box",
-			"SetCursor",
-			"std::bind",
-			"\"GUI\"",
-			"frame_clock",
-			"VectorMap",
-			"m_vectorMap",
-			"VectorMap",
-			"VectorMap.h",
-			"int.h",
-			"ModifiableInt",
-			"bool.h",
-			"ModifiableBool",
-			"0ULL",
-			"m_modifierArrayMap",
-			"ModifierArrayMap",
-			"types/GameObject.h",
-			"getDisplayName",
-			"GameObject",
-			"getDisplayName"
+			"#include \"services/IStrings.h\""
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -473,6 +550,17 @@
 		"regex": false,
 		"replace_history":
 		[
+			"vector",
+			"Vector",
+			"vector",
+			"EventSet",
+			"",
+			"Vec3i",
+			"#include \"pchheader.h\"",
+			"Printable",
+			"printToStream(",
+			"toStringStream(",
+			"Printable",
 			"MapView2D",
 			"MapTileView2D",
 			"EntityView2D",
@@ -494,14 +582,1514 @@
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
-		"whole_word": false,
+		"whole_word": true,
 		"wrap": true
 	},
 	"groups":
 	[
 		{
+			"selected": 6,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "scene_graph/Artist.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 148,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								142,
+								142
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										141,
+										142
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/round_bracket.png",
+										"region.yellowish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										140,
+										141
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"git_gutter_is_enabled": true,
+							"open_with_edit": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tabs_extra_last_activated": 1571062047.48,
+							"tabs_extra_last_activated_sheet_index": 0
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "scene_graph/Artist.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 222,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								177,
+								177
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										220,
+										221
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										119,
+										120
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"git_gutter_is_enabled": true,
+							"open_with_edit": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tabs_extra_last_activated": 1571062048.77,
+							"tabs_extra_last_activated_sheet_index": 1
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "CMakeLists.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 25156,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								16797,
+								16797
+							]
+						],
+						"settings":
+						{
+							"SL.339.region_keys":
+							[
+							],
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										18588,
+										18589
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/round_bracket.png",
+										"region.yellowish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										18201,
+										18202
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										16851,
+										16852
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/round_bracket.png",
+										"region.yellowish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										16670,
+										16671
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/CMake/CMake.sublime-syntax",
+							"tab_size": 4,
+							"tabs_extra_last_activated": 1571061950.0,
+							"tabs_extra_last_activated_sheet_index": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 8147.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "scene_graph/EventProcessor.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 188,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								188,
+								188
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"git_gutter_is_enabled": true,
+							"open_with_edit": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tabs_extra_last_activated": 1571062158.48,
+							"tabs_extra_last_activated_sheet_index": 3
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "scene_graph/EventProcessor.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 251,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								206,
+								206
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										249,
+										250
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										132,
+										133
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tabs_extra_last_activated": 1571062159.35,
+							"tabs_extra_last_activated_sheet_index": 4
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "text/More thoughts on architecture.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1876,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1876,
+								1876
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/MarkdownEditing/Markdown (Standard).tmLanguage",
+							"tabs_extra_last_activated": 1571061731.35,
+							"tabs_extra_last_activated_sheet_index": 8
+						},
+						"translation.x": 0.0,
+						"translation.y": 643.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "scene_graph/SceneNode.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2632,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								180,
+								180
+							]
+						],
+						"settings":
+						{
+							"SL.346.region_keys":
+							[
+							],
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										173,
+										174
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										166,
+										167
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"git_gutter_is_enabled": true,
+							"open_with_edit": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1571062169.11,
+							"tabs_extra_last_activated_sheet_index": 6,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1056.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "scene_graph/SceneNode.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3051,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3009,
+								3009
+							]
+						],
+						"settings":
+						{
+							"SL.347.region_keys":
+							[
+							],
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										2156,
+										2157
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										175,
+										176
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										3010,
+										3011
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										161,
+										162
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"git_gutter_is_enabled": true,
+							"open_with_edit": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1571062160.85,
+							"tabs_extra_last_activated_sheet_index": 7,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1378.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -566,6 +2154,94 @@
 		"selected_items":
 		[
 			[
+				"Asser",
+				"design_patterns/AssertHelper.h"
+			],
+			[
+				"ObjectRegistry",
+				"design_patterns/ObjectRegistry.h"
+			],
+			[
+				"stdafx.h",
+				"include/stdafx.h"
+			],
+			[
+				"AppStateGameMode.h",
+				"game/AppStateGameMode.h"
+			],
+			[
+				"AppStateGameMode.cpp",
+				"game/AppStateGameMode.cpp"
+			],
+			[
+				"App.cpp",
+				"game/App.cpp"
+			],
+			[
+				"InventoryArea.h",
+				"inventory/InventoryArea.h"
+			],
+			[
+				"Printable.h",
+				"design_patterns/Printable.h"
+			],
+			[
+				"Printable.cpp",
+				"design_patterns/Printable.cpp"
+			],
+			[
+				"Object.cpp",
+				"design_patterns/Object.cpp"
+			],
+			[
+				"Object.h",
+				"design_patterns/Object.h"
+			],
+			[
+				".giti",
+				".gitignore"
+			],
+			[
+				"Gender.h",
+				"types/Gender.h"
+			],
+			[
+				"pchheader.h",
+				"pchheader.h"
+			],
+			[
+				"CMake",
+				"CMakeLists.txt"
+			],
+			[
+				"CMakeLists.txt",
+				"CMakeLists.txt"
+			],
+			[
+				"RNGUtils.h",
+				"utilities/RNGUtils.h"
+			],
+			[
+				"C",
+				"CMakeLists.txt"
+			],
+			[
+				"Vec2.h",
+				"types/Vec2.h"
+			],
+			[
+				"CMakeLists",
+				"CMakeLists.txt"
+			],
+			[
+				"Seri",
+				"design_patterns/Serializable.h"
+			],
+			[
+				"Seriali",
+				"design_patterns/Serializable.cpp"
+			],
+			[
 				"AppState.h",
 				"game/AppState.h"
 			],
@@ -598,10 +2274,6 @@
 				"game_windows/StatusArea.cpp"
 			],
 			[
-				"AppStateGameMode.cpp",
-				"game/AppStateGameMode.cpp"
-			],
-			[
 				"MessageLogView.cpp",
 				"game_windows/MessageLogView.cpp"
 			],
@@ -630,20 +2302,8 @@
 				"views/MapView.h"
 			],
 			[
-				"App.cpp",
-				"game/App.cpp"
-			],
-			[
-				"AppStateGameMode.h",
-				"game/AppStateGameMode.h"
-			],
-			[
 				"TileSheet.cpp",
 				"tilesheet/TileSheet.cpp"
-			],
-			[
-				"CMake",
-				"CMakeLists.txt"
 			],
 			[
 				"GUIObject.h",
@@ -658,10 +2318,6 @@
 				"game/GameState.h"
 			],
 			[
-				"CMakeLists",
-				"CMakeLists.txt"
-			],
-			[
 				"Action.h",
 				"actions/Action.h"
 			],
@@ -672,14 +2328,6 @@
 			[
 				"Action.cpp",
 				"actions/Action.cpp"
-			],
-			[
-				"stdafx.h",
-				"include/stdafx.h"
-			],
-			[
-				"C",
-				"CMakeLists.txt"
 			],
 			[
 				"SystemNarrator.h",
@@ -706,20 +2354,8 @@
 				"game/App.h"
 			],
 			[
-				"CMakeLists.txt",
-				"CMakeLists.txt"
-			],
-			[
 				"Event.h",
 				"design_patterns/Event.h"
-			],
-			[
-				"Object.cpp",
-				"design_patterns/Object.cpp"
-			],
-			[
-				"Object.h",
-				"design_patterns/Object.h"
 			],
 			[
 				"EntityId.cpp",
@@ -864,10 +2500,6 @@
 			[
 				"Vec2.cpp",
 				"types/Vec2.cpp"
-			],
-			[
-				"Vec2.h",
-				"types/Vec2.h"
 			],
 			[
 				"resque.rb",
@@ -1032,50 +2664,6 @@
 			[
 				"old_sanit",
 				"lib/utility/sanitizers/old_html_input_sanitizer.rb"
-			],
-			[
-				"html_sani",
-				"spec/concern/html_sanitizer_concern_spec.rb"
-			],
-			[
-				"html_",
-				"lib/concerns/html_sanitizer_concern.rb"
-			],
-			[
-				"html_string_sanitizer_spec.rb",
-				"spec/utility/html_string_sanitizer_spec.rb"
-			],
-			[
-				"html_string_sanitizer.rb",
-				"lib/utility/html_string_sanitizer.rb"
-			],
-			[
-				"old",
-				"lib/utility/sanitizers/old_html_input_sanitizer.rb"
-			],
-			[
-				"settings_controller",
-				"app/controllers/users/candidates/profile/settings_controller.rb"
-			],
-			[
-				"settings_controller_spec.rb",
-				"spec/controllers/candidate/profile/settings_controller_spec.rb"
-			],
-			[
-				"field_answer_formatter_spec",
-				"spec/excel_exporter/utility/field_answer_formatter_spec.rb"
-			],
-			[
-				"html_sanitizer_concern_spec.rb",
-				"spec/concerns/html_sanitizer_concern_spec.rb"
-			],
-			[
-				"html_string_sani",
-				"lib/utility/html_string_sanitizer.rb"
-			],
-			[
-				"Gemfiles",
-				"client/node_modules/draft-js/lib/getTextContentFromFiles.js"
 			]
 		],
 		"width": 0.0

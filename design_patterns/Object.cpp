@@ -9,7 +9,7 @@
 #include "Event.h"
 #include "ObjectRegistry.h"
 
-Object::Object(std::unordered_set<EventID> const events)
+Object::Object(EventSet const events)
   :
   m_eventQueue{},
   m_eventObservers{}
@@ -25,7 +25,7 @@ Object::Object(std::unordered_set<EventID> const events)
   }
 }
 
-Object::Object(std::unordered_set<EventID> const events, std::string name) :
+Object::Object(EventSet const events, std::string name) :
   Object(events)
 {
   m_name = name;

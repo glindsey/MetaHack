@@ -1,0 +1,372 @@
+// Some thoughts on system re-architecture
+// - I should focus more on a scene graph arrangement. I started doing this with the `views` subdirectory, but it should really be made more explicit.
+// To start off, this would consolidate the `AppState*` and `*View` objects to derive from a single `SceneNode` object.
+// This is all just spitballing right now. Some of it may be ridiculous overkill, other parts may be insufficient.
+
+digraph "SceneNode Architecture" {
+  compound=true;
+  ranksep=1.5;
+
+  subgraph "Classes" {
+    subgraph "cluster_Generic" {
+      label = "Generic SceneNode Classes";
+
+      subgraph {
+        rank = max;
+
+        // SceneNode:
+        //  - Base class of all scene graph nodes
+        //  - Children: collection of SceneNodes; decorators; event processors
+        //  - Events fired: none
+        //  - Events handled: none
+        "SceneNode";
+
+        // Base
+        //  - Virtual superclass for all event processors
+        //  - Events handled: ?
+        //  - Events fired: ?
+        "EventProcessor::Base" [label="EventProcessor\nBase"];
+      }
+
+      // === EVENT PROCESSORS ===================================================
+      // Event processors take one or more recieved events as inputs and process
+      // them into other events as outputs.
+
+      // ChildSelectable:
+      //  - Events handled: child.clicked
+      //  - Events fired: itemSelected
+      "EventProcessor::ChildSelectable" [label="EventProcessor\nChildSelectable"];
+
+      // Clickable:
+      //  - Events handled: pressed, released
+      //  - Events fired: clicked
+      "EventProcessor::Clickable" [label="EventProcessor\nClickable"];
+
+      // Doubleclickable:
+      //  - Events handled: pressed, released
+      //  - Events fired: doubleClicked
+      "EventProcessor::Doubleclickable" [label="EventProcessor\nDoubleclickable"];
+
+      // Draggable:
+      //  - Events handled: pressed, released
+      //  - Events fired: dragStart, dragging, dragEnd
+      "EventProcessor::Draggable" [label="EventProcessor\nDraggable"];
+
+      // DragMovable:
+      //  - Events handled: dragStart, dragging, dragEnd
+      //  - Events fired: moved
+      "EventProcessor::UserMovable" [label="EventProcessor\nUserMovable"];
+
+      // DragResizable:
+      //  - Events handled: child.dragStart, child.dragging, child.dragEnd (where `child` is a resize handle)
+      //  - Events fired: sizeChanged
+      "EventProcessor::UserResizable" [label="EventProcessor\nUserResizable"];
+
+      // BoundedValueWatcher:
+      //  - Parent: SceneNode
+      //  - Tied to: BoundedValue
+      "UIComponent::BoundedValueWatcher" [label="EventProcessor\nBoundedValueWatcher"];
+
+      // Button:
+      //  - Parent: SceneNode
+      //  - Children: label (Label)
+      //  - Event Processors: Clickable
+      //  - Tied to: nothing
+      //  - Events fired: (clicked)
+      //  - Events handled: pressed, released
+      "UIComponent::Button" [label="UIComponent\nButton"];
+
+      // Checkbox:
+      //  - Parent: SceneNode
+      //  - Event Processors: Clickable
+      //  - Tied to: ThreeState
+      //  - Events fired: (clicked), valueChanged
+      //  - Events handled: pressed, released, valueChanged
+      "UIComponent::Checkbox" [label="UIComponent\nCheckbox"];
+
+      // Container:
+      //  - Parent: SceneNode
+      //  - Children: any number of SceneNodes
+      //  - Event Processors: ChildSelectable
+      //  - Events fired: (itemSelected)
+      //  - Events handled: child.dragStart, child.dragging, child.dragEnd
+      //  - Notes:
+      //    - Container can be configured to allow several arrangements of child objects:
+      //      - Free (objects can go anywhere; default setting)
+      //      - Grid (objects are constrained to a grid, with columns that are either uniform or have
+      //              fixed/proportional sizing)
+      //      - List (objects are constrained to a horizontal or vertical list)
+      //      - Radial (objects are arranged in a circle around a point)
+      "UIComponent::Container" [label="UIComponent\nContainer"];
+
+      // Label:
+      //  - Parent: SceneNode
+      //  - Children: image* (SceneObject::Sprite), text (SceneObject::Text)
+      "UIComponent::Label" [label="UIComponent\nLabel"];
+
+      // Menu:
+      //  - Parent: Container
+      //  - Children: any number of SceneNodes as menu options
+      //  - Event Processors: ?
+      //  - Events fired: (itemSelected)
+      //  - Events handled: none
+      //  - Notes:
+      //    - Menu may not end up being a separate class from Container; depends on if there's a good reason for it
+      "UIComponent::Menu" [label="UIComponent\nMenu"];
+
+      // Scrollbar:
+      //  - Parent: SceneNode
+      //  - Event Processors: none (handled by children)
+      //  - Children: minusButton (Button), beforeHandle (SceneObject::Rectangle), handle (Button),
+      //              afterHandle (SceneObject::Rectangle), plusButton (Button)
+      //  - Tied to: BoundedValue
+      //  - Events fired: valueChanged
+      //  - Events handled: boundsChanged, valueChanged (children are moved/resized to reflect changes)
+      "UIComponent::Scrollbar" [label="UIComponent\nScrollbar"];
+
+      // Spinner:
+      //  - Parent: SceneNode
+      //  - Event Processors: none (handled by children)
+      //  - Tied to: BoundedValue
+      //  - Children: minusButton (Button), value (TextBox), plusButton (Button)
+      //  - Events fired: valueChanged
+      //  - Events handled: boundsChanged, valueChanged (rebroadcast to children to handle)
+      "UIComponent::Spinner" [label="UIComponent\nSpinner"];
+
+      // TextBox:
+      //  - Parent: SceneObject::Text
+      //  - Event Processors: ?
+      //  - Tied to data: string variable
+      //  - Events fired: valueChanged, possibly others
+      //  - Events handled: keySeen, valueChanged
+      "UIComponent::TextBox" [label="UIComponent\nTextBox"];
+
+      // Window:
+      //  - Parent: Base
+      //  - Children: titleBar* (Label), minimizeButton* (Button), maximizeButton* (Button),
+      //              closeButton* (Button), clientArea (SceneNode), resizeHandle* (SceneObject::Sprite)
+      //  - Event Processors: ?
+      //  - Events fired: ?
+      //  - Events handled: ?
+      "UIComponent::Window" [label="UIComponent\nWindow"];
+
+      "SceneObject::BoundedValueDisplay" [label="SceneObject\nBoundedValueDisplay"];
+      "SceneObject::Rectangle" [label="SceneObject\nRectangle"];
+      "SceneObject::Sprite" [label="SceneObject\nSprite"];
+      "SceneObject::Text" [label="SceneObject\nText"]; // can display a static string, or follow a dynamically changing one
+    }
+
+    // === STUFF SPECIFIC TO THE GAME =========================================
+
+    subgraph "cluster_Specific" {
+      label = "Classes Specific to Game UI";
+
+      subgraph {
+        rank = max;
+
+        "AppState::Base" [label="AppState\nBase"];
+        "GameScreenLayer::Base" [label="GameScreenLayer\nBase"];
+        "UIWindow::Base" [label="UIWindow\nBase"];
+        "GameObject::Base" [label="GameObject\nBase"];
+      }
+
+      subgraph {
+        rank = same;
+
+        "AppState::SplashScreen" [label="AppState\nSplashScreen"];
+        "AppState::MainMenuScreen" [label="AppState\nMainMenuScreen"];
+        "AppState::GameScreen" [label="AppState\nGameScreen"];
+      }
+
+      subgraph {
+        rank = same;
+
+        "GameScreenLayer::PlayArea" [label="GameScreenLayer\nPlayArea"];
+        "GameScreenLayer::UserInterface" [label="GameScreenLayer\nUserInterface"];
+      }
+
+      subgraph {
+        rank = same;
+
+        "UIWindow::GameOptions" [label="UIWindow\nGameOptions"];
+        "UIWindow::Log" [label="UIWindow\nLog"];
+        "UIWindow::Inventory" [label="UIWindow\nInventory"];
+        "UIWindow::QuitOptions" [label="UIWindow\nQuitOptions"];
+        "UIWindow::Status" [label="UIWindow\nStatus"];
+      }
+
+      subgraph {
+        rank = same;
+
+        "UIObject::ActionsMenu" [label="UIObject\nActionsMenu"];
+        "UIObject::EntityInventory" [label="UIObject\nEntityInventory"];
+        "UIObject::GameOptionsMenu" [label="UIObject\nGameOptionsMenu"];
+        "UIObject::MainMenu" [label="UIObject\nMainMenu"];
+        "UIObject::MessageLog" [label="UIObject\nMessageLog"];
+        "UIObject::QuitMenu" [label="UIObject\nQuitMenu"];
+        "UIObject::TargetsMenu" [label="UIObject\nTargetsMenu"];
+      }
+
+      subgraph {
+        "GameObject::Entity" [label="GameObject\nEntity"];
+        "GameObject::Map" [label="GameObject\nMap"];
+        // "GameObject::MapRoom" [label="GameObject\nMapRoom"];  // Not sure if this should be its own node in the graph...
+        "GameObject::MapTile" [label="GameObject\nMapTile"];
+      }
+    }
+  }
+
+  subgraph "Inheritance" {
+    edge [style=dashed, color=gray]; //, constraint=false];
+    "AppState::Base" -> "SceneNode";
+    "GameScreenLayer::Base" -> "SceneNode";
+    "GameObject::Base" -> "SceneNode";
+
+    "AppState::SplashScreen" -> "AppState::Base";
+    "AppState::MainMenuScreen" -> "AppState::Base";
+    "AppState::GameScreen" -> "AppState::Base";
+
+    "EventProcessor::ChildSelectable" -> "EventProcessor::Base";
+    "EventProcessor::Clickable" -> "EventProcessor::Base";
+    "EventProcessor::Doubleclickable" -> "EventProcessor::Base";
+    "EventProcessor::Draggable" -> "EventProcessor::Base";
+    "EventProcessor::UserMovable" -> "EventProcessor::Base";
+    "EventProcessor::UserResizable" -> "EventProcessor::Base";
+
+    "GameScreenLayer::PlayArea" -> "GameScreenLayer::Base";
+    "GameScreenLayer::UserInterface" -> "GameScreenLayer::Base";
+
+    "UIComponent::BoundedValueWatcher" -> "SceneNode";
+    "UIComponent::Button" -> "SceneNode";
+    "UIComponent::Checkbox" -> "SceneNode";
+    "UIComponent::Container" -> "SceneNode";
+    "UIComponent::Label" -> "SceneNode";
+    "UIComponent::Menu" -> "UIComponent::Container";
+    "UIComponent::Scrollbar" -> "UIComponent::BoundedValueWatcher";
+    "UIComponent::Spinner" -> "UIComponent::BoundedValueWatcher";
+    "UIComponent::TextBox" -> "SceneObject::Text";
+    "UIComponent::Window" -> "SceneNode";
+
+    "UIObject::ActionsMenu" -> "UIComponent::Menu";
+    "UIObject::EntityInventory" -> "UIComponent::Container";
+    "UIObject::GameOptionsMenu" -> "UIComponent::Menu";
+    "UIObject::MainMenu" -> "UIComponent::Menu";
+    "UIObject::MessageLog" -> "UIComponent::Container";
+    "UIObject::QuitMenu" -> "UIComponent::Menu";
+    "UIObject::TargetsMenu" -> "UIComponent::Menu";
+
+    "UIWindow::Base" -> "UIComponent::Window";
+    "UIWindow::GameOptions" -> "UIWindow::Base";
+    "UIWindow::Log" -> "UIWindow::Base";
+    "UIWindow::Inventory" -> "UIWindow::Base";
+    "UIWindow::QuitOptions" -> "UIWindow::Base";
+    "UIWindow::Status" -> "UIWindow::Base";
+
+    "GameObject::Base" -> "SceneNode";
+    "GameObject::Entity" -> "GameObject::Base";
+    "GameObject::Map" -> "GameObject::Base";
+    //"GameObject::MapRoom" -> "GameObject::Base";
+    "GameObject::MapTile" -> "GameObject::Base";
+
+    "SceneObject::BoundedValueDisplay" -> "SceneNode";
+    "SceneObject::Rectangle" -> "SceneNode";
+    "SceneObject::Sprite" -> "SceneNode";
+    "SceneObject::Text" -> "SceneNode";
+  }
+
+  subgraph "Mixins" {
+    edge [style=dashed, color=orange];
+
+    "EventProcessor::Clickable" -> "SceneNode";
+    "EventProcessor::Doubleclickable" -> "SceneNode";
+    "EventProcessor::Draggable" -> "SceneNode";
+    "EventProcessor::ChildSelectable" -> "UIComponent::Container";
+    "EventProcessor::UserMovable" -> "UIWindow::Base";
+    "EventProcessor::UserResizable" -> "UIWindow::Base";
+  }
+
+  subgraph "Ownership" {
+    edge [dir=back]; //style=dashed, color=gray, constraint=false];
+
+    // Edges show child -> parent relationships
+
+    // First, the generic ownership associations...
+
+    "UIComponent::Label" -> "UIComponent::Button";
+
+    "SceneNode" -> "UIComponent::Container";
+
+    "SceneObject::Sprite" -> "UIComponent::Label";
+    "SceneObject::Text" -> "UIComponent::Label";
+
+    "UIComponent::Button" -> "UIComponent::Scrollbar";
+    "SceneObject::Rectangle" -> "UIComponent::Scrollbar";
+
+    "UIComponent::Button" -> "UIComponent::Spinner";
+    "UIComponent::TextBox" -> "UIComponent::Spinner";
+
+    "UIComponent::Label" -> "UIComponent::Window";
+    "UIComponent::Button" -> "UIComponent::Window";
+    "SceneNode" -> "UIComponent::Window";
+    "SceneObject::Sprite" -> "UIComponent::Window";
+
+    "UIObject::MainMenu" -> "AppState::MainMenuScreen";
+    "UIWindow::GameOptions" -> "AppState::MainMenuScreen";
+
+    "GameScreenLayer::PlayArea" -> "AppState::GameScreen";
+    "GameScreenLayer::UserInterface" -> "AppState::GameScreen";
+
+    "SceneObject::Text" -> "UIObject::MainMenu";
+    "UIComponent::Button" -> "UIObject::MainMenu";
+
+    "UIObject::GameOptionsMenu" -> "UIWindow::GameOptions";
+
+    "UIObject::QuitMenu" -> "UIWindow::QuitOptions";
+
+    "SceneObject::Text" -> "UIObject::GameOptionsMenu";
+    "UIComponent::Button" -> "UIObject::GameOptionsMenu";
+    "UIComponent::Checkbox" -> "UIObject::GameOptionsMenu";
+    "UIComponent::Scrollbar" -> "UIObject::GameOptionsMenu";
+    "UIComponent::Spinner" -> "UIObject::GameOptionsMenu";
+    "UIComponent::TextBox" -> "UIObject::GameOptionsMenu";
+
+    "SceneObject::Text" -> "UIObject::QuitMenu";
+    "UIComponent::Button" -> "UIObject::QuitMenu";
+
+    "GameObject::Map" -> "GameScreenLayer::PlayArea";
+
+    "UIWindow::Log" -> "GameScreenLayer::UserInterface";
+    "UIWindow::Inventory" -> "GameScreenLayer::UserInterface";
+    "UIWindow::Status" -> "GameScreenLayer::UserInterface";
+
+    "GameObject::MapTile" -> "GameObject::Map";
+
+    "SceneObject::Text" -> "UIWindow::Log";
+    "UIObject::MessageLog" -> "UIWindow::Log";
+    "UIComponent::TextBox" -> "UIWindow::Log";
+
+    "SceneObject::Text" -> "UIWindow::Inventory";
+    "GameObject::Entity" -> "UIWindow::Inventory";
+    "UIObject::EntityInventory" -> "UIWindow::Inventory";
+
+    "SceneObject::Text" -> "UIWindow::Status";
+    "SceneObject::BoundedValueDisplay" -> "UIWindow::Status";
+    "GameObject::Entity" -> "UIWindow::Status";
+
+    "GameObject::Entity" -> "GameObject::MapTile";
+
+    "SceneObject::Text" -> "UIObject::MessageLog";
+
+    "SceneObject::Sprite" -> "GameObject::Entity";
+    "SceneObject::Text" -> "GameObject::Entity";
+
+    "GameObject::Entity" -> "UIObject::EntityInventory";
+    "UIObject::ActionsMenu" -> "GameObject::Entity"; // on click
+    "UIObject::TargetsMenu" -> "GameObject::Entity"; // on click
+
+    "UIComponent::Label" -> "UIObject::ActionsMenu";
+    "GameObject::Entity" -> "UIObject::TargetsMenu";
+
+  }
+
+}

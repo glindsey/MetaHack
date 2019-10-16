@@ -1,0 +1,41 @@
+# More thoughts on architecture
+
+"Prefer composition over inheritance" is The Big Thing these days. And I can understand why.
+
+So I'm thinking about to overhaul event and rendering architecture to follow that guideline a bit better.
+
+# Classes
+
+## `SceneNode`
+A node in the scene graph. It has the following members:
+
+### `parent`
+A raw pointer to the `SceneNode` object that owns this one.
+
+### `children`
+A `deque` of `SceneNode` objects. Contains all nodes owned by this one.
+
+### `artists`
+A `deque` of `Artist` objects (described below). Used to draw this node and all nodes below it.
+
+### `processors`
+A `deque` of `EventProcessor` objects (described below). Used to manipulate and handle `Event` objects.
+
+### `canvas`
+A `unique_ptr` to the canvas that this node, and all nodes owned by it, are drawn onto. Haven't decided yet if this should be its own object, or just a raw `sf::RenderTexture` or something. The latter is simpler, but the former would make it less dependent on SFML.
+
+## `Artist`
+An object that handles drawing a node onto a canvas. When an Artist object is created, it is passed a reference to the `SceneNode` that owns it.
+
+## `EventProcessor`
+An object that receives an `Event` object as input, and does one or more of the following:
+    - Ignores it.
+    - Consumes it (e.g. further processors in a deque will not process them).
+    - Passes it to children.
+    - Manipulates the underlying `SceneNode` object.
+    - Generates one or more `Event` objects as output. 
+When it is created, it is passed a reference to the `SceneNode` that owns it.
+
+# Ownership
+All objects contained within `deque` objects in the `SceneNode` are owned by the `SceneNode` itself. Although I could use `ptr_deque` or even a `deque` of `unique_ptr` instances to store them, I think it will be simpler to just leave them as raw pointers and handle destruction manually.
+
