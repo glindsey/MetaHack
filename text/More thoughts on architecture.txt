@@ -54,21 +54,22 @@ All objects contained within `deque` objects in the `SceneNode` are owned by the
 # Process
 Each SceneNode operates generally as follows:
 
-## Game Logic Tick
-- For each event `event` in the node's queue:
-    + For each event processor `processor` in the node:
-        * Call `processor.process(event)`: This may queue new events, update node variables, etc.
-        * If the call returns `false`, processing of the event halts there; otherwise, it passes to the next processor.
-        + One of the event processors available is `PassToChildren`; this processor passes the event down to children of the node.
+## On Event Received:
+- For each event processor `processor` in the node:
+    + Call `processor.process(event)`: This may queue new events, update node variables, etc.
+    + If the call returns `false`, processing of the event halts there; otherwise, it passes to the next processor.
+    + One of the event processors available is `PassToChildren`; this processor passes the event down to children of the node.
+
+## On SceneNode Tick:
 - If the node is marked as `needsReorganization`:
-    + Call `organizer.organize()`.
+    + Call `organizer.organize()`: This should be recursive down through child nodes.
 - If the node is marked as `needsRedraw`:
     + The node's canvas is cleared.
     + For each artist `artist` in the node:
         * Call `artist.drawOn(canvas)`.
         * One of the artists available is `drawChildren`, which does exactly what it sounds like, redrawing each child object and rendering that to the canvas.
 
-## Frame Buffer Tick
+## On Frame Buffer Tick:
 - Since redrawing should occur on-demand, all that should be needed at this point is to draw the root node to the screen.
 
 # Example: A Tri-State Checkbox (on/off/partial)

@@ -18,10 +18,12 @@ Object::Object(EventSet const events)
 
   for (EventID const event : events)
   {
-    CLOG(TRACE, "EventSystem") << "Registering Event 0x" <<
-      std::setbase(16) << std::setfill('0') << std::setw(8) << event <<
-      " for Object " << *this << std::setw(0) << std::setbase(10);
-    m_eventObservers.emplace(event, ObserversSet());
+    registerAsEmitterOf(event);
+
+    // CLOG(TRACE, "EventSystem") << "Registering Object " << *this <<
+    //   std::setw(0) << std::setbase(10) << " as emitter of EventID 0x" <<
+    //   std::setbase(16) << std::setfill('0') << std::setw(8) << event;
+    // m_eventObservers.emplace(event, ObserversSet());
   }
 }
 
@@ -59,6 +61,24 @@ std::string const& Object::getName()
   return m_name;
 }
 
+void Object::registerAsEmitterOf(EventID eventID)
+{
+  if (m_eventObservers.count(eventID) != 0)
+  {
+    CLOG(WARNING, "EventSystem") << "Object " << *this << std::setw(0) <<
+    std::setbase(10) << " is already registered as emitter of EventID 0x" <<
+    std::setbase(16) << std::setfill('0') << std::setw(8) << eventID <<
+    ", skipping";
+
+    return;
+  }
+
+  CLOG(TRACE, "EventSystem") << "Registering Object " << *this <<
+    std::setw(0) << std::setbase(10) << " as emitter of EventID 0x" <<
+    std::setbase(16) << std::setfill('0') << std::setw(8) << eventID;
+  m_eventObservers.emplace(eventID, ObserversSet());
+}
+
 void Object::addObserver(Object& observer, EventID eventID)
 {
   if (!REGISTRY.contains(&observer))
@@ -81,7 +101,7 @@ void Object::addObserver(Object& observer, EventID eventID)
   else
   {
     Assert("EventSystem", !observerIsObservingEvent(observer, eventID),
-           "\nReason:\tattempted to add an observer for an event it is already observing." <<
+           "\nReason:\tattempted to add an observer for an event type it is already observing." <<
            "\nSubject:\t" << *this <<
            "\nObserver:\t" << observer <<
            "\nEvent:\t" << eventID);
@@ -152,7 +172,7 @@ void Object::removeObserver(Object& observer, EventID eventID)
     auto& observersSet = getObservers(eventID);
 
     Assert("EventSystem", (observersSet.size() > 0),
-           "\nReason:\tattempted to remove an observer on event with no observers." <<
+           "\nReason:\tattempted to remove an observer on an event type with no observers." <<
            "\nSubject:\t" << *this <<
            "\nObserver:\t" << observer <<
            "\nEvent:\t" << eventID);
@@ -347,7 +367,7 @@ ObserversSet& Object::getObservers(EventID eventID)
   //auto eventObserversIter = m_eventObservers.find(eventID);
 
   Assert("EventSystem", (m_eventObservers.count(eventID) != 0),
-         "\nReason:\tattempted to get observers for an unregistered event." <<
+         "\nReason:\tattempted to get observers for an unregistered event type." <<
          "\nSubject:\t" << *this <<
          "\nEventID:\t" << eventID);
 
@@ -359,7 +379,7 @@ ObserversSet const& Object::getObservers(EventID eventID) const
   //auto eventObserversIter = m_eventObservers.find(eventID);
 
   Assert("EventSystem", (m_eventObservers.count(eventID) != 0),
-         "\nReason:\tattempted to get observers for an unregistered event." <<
+         "\nReason:\tattempted to get observers for an unregistered event type." <<
          "\nSubject:\t" << *this <<
          "\nEventID:\t" << eventID);
 

@@ -200,3 +200,16 @@ SceneNode& SceneNode::root()
 
   return *(s_root.get());
 }
+
+bool SceneNode::onEvent(Event const& event)
+{
+  for (auto processor : m_processors)
+  {
+    if (processor->handle(event))
+    {
+      // Processor consumed the event, so return.
+      return true;
+    }
+  }
+  return false;
+}

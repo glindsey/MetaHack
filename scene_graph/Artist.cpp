@@ -14,3 +14,9 @@ Artist::~Artist()
 {
 
 }
+
+bool Artist::drawOn(Canvas& canvas)
+{
+  /// \todo Implement this default method.
+  return false;
+}

@@ -69,6 +69,9 @@ public:
   static SceneNode& root();
 
 protected:
+  /// Handle incoming events by passing them through processors.
+  virtual bool onEvent(Event const& event);
+
   /// Set this node's parent.
   /// Does _not_ update any previous or new parent's `m_children` member!
   /// That is handled by the public methods that call this one.

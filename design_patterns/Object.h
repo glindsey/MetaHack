@@ -35,6 +35,8 @@ public:
 
   std::string const& getName();
 
+  void registerAsEmitterOf(EventID eventId);
+
   /// Subscribes to an event emitted by an object.
   /// @param subject    Reference to object to subscribe to.
   /// @param eventID    ID of event to subscribe to, or EventID::All to

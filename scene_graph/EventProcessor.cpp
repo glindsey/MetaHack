@@ -2,6 +2,7 @@
 
 #include "EventProcessor.h"
 
+#include "Event.h"
 #include "utilities/New.h"
 
 EventProcessor::EventProcessor(SceneNode& node) :
@@ -13,4 +14,10 @@ EventProcessor::EventProcessor(SceneNode& node) :
 EventProcessor::~EventProcessor()
 {
 
+}
+
+bool EventProcessor::handle(Event const& event)
+{
+  /// \todo Implement this default method.
+  return false;
 }
