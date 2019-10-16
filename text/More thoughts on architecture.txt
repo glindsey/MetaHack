@@ -15,8 +15,14 @@ A raw pointer to the `SceneNode` object that owns this one.
 ### `children`
 A `deque` of `SceneNode` objects. Contains all nodes owned by this one.
 
+### `organizer`
+A `unique_ptr` to a `NodeOrganizer` responsible for organizing the children of this node.
+
 ### `artists`
 A `deque` of `Artist` objects (described below). Used to draw this node and all nodes below it.
+
+### `dataties`
+A `vector` of `DataTie` objects. Used to indicate what data this node is tied to.
 
 ### `processors`
 A `deque` of `EventProcessor` objects (described below). Used to manipulate and handle `Event` objects.
@@ -27,6 +33,9 @@ A `unique_ptr` to the canvas that this node, and all nodes owned by it, are draw
 ## `Artist`
 An object that handles drawing a node onto a canvas. When an Artist object is created, it is passed a reference to the `SceneNode` that owns it.
 
+## `DataTie`
+An object that describes a tie to a particular piece of model data.
+
 ## `EventProcessor`
 An object that receives an `Event` object as input, and does one or more of the following:
     - Ignores it.
@@ -36,6 +45,39 @@ An object that receives an `Event` object as input, and does one or more of the 
     - Generates one or more `Event` objects as output. 
 When it is created, it is passed a reference to the `SceneNode` that owns it.
 
+## `NodeOrganizer`
+An object that takes the collection of child objects of a node, and moves/resizes them so they are arranged in a particular fashion.
+
 # Ownership
 All objects contained within `deque` objects in the `SceneNode` are owned by the `SceneNode` itself. Although I could use `ptr_deque` or even a `deque` of `unique_ptr` instances to store them, I think it will be simpler to just leave them as raw pointers and handle destruction manually.
 
+# Process
+Each SceneNode operates generally as follows:
+
+## Game Logic Tick
+- For each event `event` in the node's queue:
+    + For each event processor `processor` in the node:
+        * Call `processor.process(event)`: This may queue new events, update node variables, etc.
+        * If the call returns `false`, processing of the event halts there; otherwise, it passes to the next processor.
+        + One of the event processors available is `PassToChildren`; this processor passes the event down to children of the node.
+- If the node is marked as `needsReorganization`:
+    + Call `organizer.organize()`.
+- If the node is marked as `needsRedraw`:
+    + The node's canvas is cleared.
+    + For each artist `artist` in the node:
+        * Call `artist.drawOn(canvas)`.
+        * One of the artists available is `drawChildren`, which does exactly what it sounds like, redrawing each child object and rendering that to the canvas.
+
+## Frame Buffer Tick
+- Since redrawing should occur on-demand, all that should be needed at this point is to draw the root node to the screen.
+
+# Example: A Tri-State Checkbox (on/off/partial)
+
+- `SceneNode`
+    + Event Processors
+        * `EventProcessor::Clickable` -- Consumes `mouseDown`/`mouseMove`/`mouseUp` events and outputs `mouseClick` events
+        * `EventProcessor::ChangeTristateOnClick` -- consumes `mouseClick` events and updates the Tristate variable tied to this node
+    + Ties
+        * `DataTie::Tristate` -- Ties this node to a Tristate instance, subscribes the node to its `EventChanged` event
+    + Artists
+        * `Artist::TristateCheckbox` -- Draws a checkbox based on the state of the Tristate instance tied to

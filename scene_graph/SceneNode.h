@@ -1,13 +1,15 @@
 #pragma once
 
-#include "Object.h"
+#include "stdafx.h"
 
-//#include <boost/thread.hpp>
-#include <vector>
+#include "Object.h"
 
 // Forward declarations
 class Artist;
+class Canvas;
+class DataTie;
 class EventProcessor;
+class NodeOrganizer;
 
 /// A node contained within the scene graph.
 class SceneNode : public Object
@@ -17,6 +19,12 @@ public:
   virtual ~SceneNode();
 
   /// \todo Probably need to implement copy ctors as well
+
+  IntVec2 size();
+  void setSize(IntVec2 size);
+
+  IntVec2 position();
+  void setPosition(IntVec2 position);
 
   /// Add a node to this node's children.
   /// If the added node already has a parent, attempts to remove the node
@@ -51,8 +59,11 @@ public:
   /// `x.moveTo(y)` is functionally equivalent to y.addChild(x).
   bool moveTo(SceneNode* newParent);
 
-  /// Returns this node's parent.
+  /// Returns a pointer to this node's parent.
   SceneNode* parent();
+
+  /// Returns a reference to this node's canvas.
+  Canvas& canvas();
 
   /// Returns the static root node of the graph.
   static SceneNode& root();
@@ -71,27 +82,45 @@ protected:
   /// Returns this node's list of children.
   std::vector<SceneNode*> const& children();
 
+  /// Returns a reference to this node's organizer.
+  NodeOrganizer& organizer();
+
   /// Returns this node's list of artists.
   std::vector<Artist*> const& artists();
+
+  /// Returns this node's map of dataties.
+  std::map<std::string, DataTie*> const& dataties();
 
   /// Returns this node's list of event processors.
   std::vector<EventProcessor*> const& processors();
 
 private:
+  /// Size of this node, in pixels.
+  IntVec2 m_size;
+
+  /// Position of this node, in pixels, relative to its parent.
+  IntVec2 m_position;
+
   /// Raw pointer to this node's parent (if any).
   SceneNode* m_parent;
 
   /// Vector of pointers to scene nodes owned by this one.
   std::vector<SceneNode*> m_children;
 
-  /// Vector of pointers to artist instances owned by this one.
+  /// Unique pointer to the node organizer owned by this node.
+  std::unique_ptr<NodeOrganizer> m_organizer;
+
+  /// Vector of pointers to artist instances owned by this node.
   std::vector<Artist*> m_artists;
 
-  /// Vector of pointers to event processors owned by this one.
+  /// Map of pointers to dataties owned by this node.
+  std::map<std::string, DataTie*> m_dataties;
+
+  /// Vector of pointers to event processors owned by this node.
   std::vector<EventProcessor*> m_processors;
 
   /// Unique pointer to the canvas owned by this node.
-  //std::unique_ptr<Canvas> m_canvas;
+  std::unique_ptr<Canvas> m_canvas;
 
   // Mutex for this node.
   // \todo MAYBE. I'm unsure if adding a mutex for thread safety is needed here.

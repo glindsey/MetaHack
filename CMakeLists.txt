@@ -393,12 +393,20 @@ set(PROJECT_INCLUDES_SFGUI_EXTENSIONS
 set(PROJECT_SOURCES_SCENE_GRAPH
     ${PROJECT_SOURCE_DIR}/scene_graph/SceneNode.cpp
     ${PROJECT_SOURCE_DIR}/scene_graph/Artist.cpp
-    ${PROJECT_SOURCE_DIR}/scene_graph/EventProcessor.cpp)
+    ${PROJECT_SOURCE_DIR}/scene_graph/Canvas.cpp
+    ${PROJECT_SOURCE_DIR}/scene_graph/DataTie.cpp
+    ${PROJECT_SOURCE_DIR}/scene_graph/EventProcessor.cpp
+    ${PROJECT_SOURCE_DIR}/scene_graph/NodeOrganizer.cpp
+    ${PROJECT_SOURCE_DIR}/scene_graph/OwnedByNode.cpp)
 
 set(PROJECT_INCLUDES_SCENE_GRAPH
     ${PROJECT_SOURCE_DIR}/scene_graph/SceneNode.h
     ${PROJECT_SOURCE_DIR}/scene_graph/Artist.h
-    ${PROJECT_SOURCE_DIR}/scene_graph/EventProcessor.h)
+    ${PROJECT_SOURCE_DIR}/scene_graph/Canvas.h
+    ${PROJECT_SOURCE_DIR}/scene_graph/DataTie.h
+    ${PROJECT_SOURCE_DIR}/scene_graph/EventProcessor.h
+    ${PROJECT_SOURCE_DIR}/scene_graph/NodeOrganizer.h
+    ${PROJECT_SOURCE_DIR}/scene_graph/OwnedByNode.h)
 
 set(PROJECT_SOURCES_SYSTEMS
     ${PROJECT_SOURCE_DIR}/systems/Manager.cpp

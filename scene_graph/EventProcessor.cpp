@@ -5,7 +5,7 @@
 #include "utilities/New.h"
 
 EventProcessor::EventProcessor(SceneNode& node) :
-  m_node{node}
+  OwnedByNode(node)
 {
 
 }

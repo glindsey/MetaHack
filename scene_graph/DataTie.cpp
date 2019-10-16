@@ -1,16 +1,16 @@
 #include "stdafx.h"
 
-#include "Artist.h"
+#include "DataTie.h"
 
 #include "utilities/New.h"
 
-Artist::Artist(SceneNode& node) :
+DataTie::DataTie(SceneNode& node) :
   OwnedByNode(node)
 {
 
 }
 
-Artist::~Artist()
+DataTie::~DataTie()
 {
 
 }

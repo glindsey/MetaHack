@@ -1,10 +1,11 @@
 #pragma once
 
-/// Forward declarations
-class SceneNode;
+#include "stdafx.h"
+
+#include "OwnedByNode.h"
 
 /// An object that processes events for a scene node.
-class EventProcessor
+class EventProcessor : public OwnedByNode
 {
 public:
   EventProcessor(SceneNode& node);
@@ -13,5 +14,4 @@ public:
 protected:
 
 private:
-  SceneNode& m_node;
 };

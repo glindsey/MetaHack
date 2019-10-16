@@ -5,11 +5,14 @@
 #include "utilities/New.h"
 
 #include "Artist.h"
+#include "Canvas.h"
 #include "EventProcessor.h"
+#include "NodeOrganizer.h"
 
 SceneNode::SceneNode(EventSet const events, SceneNode* parent) :
   Object(events),
-  m_parent{parent}
+  m_parent{ parent },
+  m_canvas{ NEW Canvas(*this) }
 {
 
 }
@@ -36,6 +39,32 @@ SceneNode::~SceneNode()
     delete child;
   }
   m_children.clear();
+}
+
+IntVec2 SceneNode::size()
+{
+  return m_size;
+}
+
+void SceneNode::setSize(IntVec2 size)
+{
+  m_size = size;
+
+  m_canvas->setSize(size);
+
+  /// \todo Tell all child nodes that we've been resized and/or re-organize the child nodes as needed.
+}
+
+IntVec2 SceneNode::position()
+{
+  return m_position;
+}
+
+void SceneNode::setPosition(IntVec2 position)
+{
+  m_position = position;
+
+  /// \todo Tell all child nodes that our position has changed (?)
 }
 
 bool SceneNode::addChild(SceneNode* newChild)
@@ -116,6 +145,11 @@ SceneNode* SceneNode::parent()
   return m_parent;
 }
 
+Canvas& SceneNode::canvas()
+{
+  return *(m_canvas.get());
+}
+
 void SceneNode::setParent(SceneNode* parent)
 {
   m_parent = parent;
@@ -138,9 +172,19 @@ std::vector<SceneNode*> const& SceneNode::children()
   return m_children;
 }
 
+NodeOrganizer& SceneNode::organizer()
+{
+  return *(m_organizer.get());
+}
+
 std::vector<Artist*> const& SceneNode::artists()
 {
   return m_artists;
+}
+
+std::map<std::string, DataTie*> const& SceneNode::dataties()
+{
+  return m_dataties;
 }
 
 std::vector<EventProcessor*> const& SceneNode::processors()
