@@ -6,7 +6,9 @@
 
 #include "Artist.h"
 #include "Canvas.h"
+#include "DataTie.h"
 #include "EventProcessor.h"
+#include "Exceptions.h"
 #include "NodeOrganizer.h"
 
 SceneNode::SceneNode(EventSet const events, SceneNode* parent) :
@@ -20,24 +22,12 @@ SceneNode::SceneNode(EventSet const events, SceneNode* parent) :
 SceneNode::~SceneNode()
 {
   // Delete all event processors.
-  for (auto& processor : m_processors)
-  {
-    delete processor;
-  }
   m_processors.clear();
 
   // Delete all artist instances.
-  for (auto& artist : m_artists)
-  {
-    delete artist;
-  }
   m_artists.clear();
 
   // Delete all children.
-  for (auto& child : m_children)
-  {
-    delete child;
-  }
   m_children.clear();
 }
 
@@ -67,40 +57,47 @@ void SceneNode::setPosition(IntVec2 position)
   /// \todo Tell all child nodes that our position has changed (?)
 }
 
-bool SceneNode::addChild(SceneNode* newChild)
+SceneNode& SceneNode::addChild(SceneNodePtr newChild)
 {
-  if ((newChild == nullptr) || hasChild(newChild))
+  Assert("SceneNode", newChild, "Empty pointer passed into addChild");
+
+  auto& childRef = *(newChild.get());
+
+  if (hasChild(childRef))
   {
-    return false;
+    return childRef;
   }
 
   // Remove from old parent, if any.
-  auto oldParent = newChild->parent();
-  if (oldParent != nullptr)
+  auto& oldParent = newChild->parent();
+  auto child = oldParent.removeChild(childRef);
+  m_children.push_back(std::move(newChild));
+  newChild->setParent(this);
+  return childRef;
+}
+
+SceneNode& SceneNode::getChild(SceneNode& childToFind)
+{
+  auto const& iter = findChild(childToFind);
+
+  if (iter == std::cend(m_children))
   {
-    Assert("SceneNode", oldParent->hasChild(newChild), "SceneNode " << this << " disowned by former parent!?");
-    auto child = oldParent->removeChild(newChild);
+    throw NoSuchChildException(childToFind);
   }
 
-  m_children.push_back(newChild);
-  newChild->setParent(this);
-  return true;
+  return *((*iter).get());  // gosh I love C++ syntax
 }
 
-SceneNode* SceneNode::getChild(SceneNode* childToFind)
+SceneNode& SceneNode::getChild(unsigned int idx)
 {
-  auto iter = std::find(std::cbegin(m_children), std::cend(m_children), childToFind);
-  return (iter == std::cend(m_children) ? nullptr : *iter);
+  Assert("SceneNode", idx < m_children.size(), "Requested child index out of range");
+
+  return *(m_children[idx].get());
 }
 
-SceneNode* SceneNode::getChild(unsigned int idx)
+bool SceneNode::hasChild(SceneNode& child)
 {
-  return (idx >= m_children.size()) ? nullptr : m_children[idx];
-}
-
-bool SceneNode::hasChild(SceneNode* child)
-{
-  return getChild(child) != nullptr;
+  return findChild(child) != std::cend(m_children);
 }
 
 unsigned int SceneNode::getChildCount()
@@ -108,41 +105,37 @@ unsigned int SceneNode::getChildCount()
   return m_children.size();
 }
 
-bool SceneNode::killChild(SceneNode* childToKill)
+bool SceneNode::killChild(SceneNode& childToKill)
 {
-  auto child = removeChild(childToKill);
-
-  if (child == nullptr)
+  if(!hasChild(childToKill))
   {
     return false;
   }
 
-  delete child;
+  removeChild(childToKill);
   return true;
 }
 
 void SceneNode::killAllChildren()
 {
-  for (auto& child : m_children)
-  {
-    delete child;
-  }
   m_children.clear();
 }
 
-bool SceneNode::moveTo(SceneNode* newParent)
+void SceneNode::moveTo(SceneNode& newParent)
 {
-  if (newParent == nullptr)
-  {
-    return false;
-  }
+  auto ptrToSelf = m_parent->removeChild(*this);
 
-  newParent->addChild(this);
+  newParent.addChild(std::move(ptrToSelf));
 }
 
-SceneNode* SceneNode::parent()
+SceneNode& SceneNode::parent()
 {
-  return m_parent;
+  if (m_parent == nullptr)
+  {
+    throw OrphanException(this);
+  }
+
+  return *m_parent;
 }
 
 Canvas& SceneNode::canvas()
@@ -150,24 +143,37 @@ Canvas& SceneNode::canvas()
   return *(m_canvas.get());
 }
 
+NodeVector::iterator SceneNode::findChild(SceneNode& childToFind)
+{
+  return std::find_if(
+    std::begin(m_children),
+    std::end(m_children), [&](std::unique_ptr<SceneNode>& p) {
+      return p.get() == &childToFind;
+    });
+}
+
 void SceneNode::setParent(SceneNode* parent)
 {
   m_parent = parent;
 }
 
-SceneNode* SceneNode::removeChild(SceneNode* childToRemove)
+SceneNodePtr SceneNode::removeChild(SceneNode& childToRemove)
 {
-  auto iter = std::find(std::cbegin(m_children), std::cend(m_children), childToRemove);
-  if (iter == std::end(m_children))
+  auto const& iter = findChild(childToRemove);
+
+  if (iter == std::cend(m_children))
   {
-    return nullptr;
+    throw NoSuchChildException(childToRemove);
   }
 
+  auto child = std::move(*iter);
   m_children.erase(iter);
-  return *iter;
+  child->setParent(nullptr);
+
+  return child;
 }
 
-std::vector<SceneNode*> const& SceneNode::children()
+NodeVector const& SceneNode::children()
 {
   return m_children;
 }
@@ -177,17 +183,17 @@ NodeOrganizer& SceneNode::organizer()
   return *(m_organizer.get());
 }
 
-std::vector<Artist*> const& SceneNode::artists()
+ArtistVector const& SceneNode::artists()
 {
   return m_artists;
 }
 
-std::map<std::string, DataTie*> const& SceneNode::dataties()
+DataTieMap const& SceneNode::dataties()
 {
   return m_dataties;
 }
 
-std::vector<EventProcessor*> const& SceneNode::processors()
+EventProcessorVector const& SceneNode::processors()
 {
   return m_processors;
 }
@@ -203,7 +209,7 @@ SceneNode& SceneNode::root()
 
 bool SceneNode::onEvent(Event const& event)
 {
-  for (auto processor : m_processors)
+  for (auto& processor : m_processors)
   {
     if (processor->handle(event))
     {

@@ -396,6 +396,7 @@ set(PROJECT_SOURCES_SCENE_GRAPH
     ${PROJECT_SOURCE_DIR}/scene_graph/Canvas.cpp
     ${PROJECT_SOURCE_DIR}/scene_graph/DataTie.cpp
     ${PROJECT_SOURCE_DIR}/scene_graph/EventProcessor.cpp
+    ${PROJECT_SOURCE_DIR}/scene_graph/Exceptions.cpp
     ${PROJECT_SOURCE_DIR}/scene_graph/NodeOrganizer.cpp
     ${PROJECT_SOURCE_DIR}/scene_graph/OwnedByNode.cpp)
 
@@ -405,6 +406,7 @@ set(PROJECT_INCLUDES_SCENE_GRAPH
     ${PROJECT_SOURCE_DIR}/scene_graph/Canvas.h
     ${PROJECT_SOURCE_DIR}/scene_graph/DataTie.h
     ${PROJECT_SOURCE_DIR}/scene_graph/EventProcessor.h
+    ${PROJECT_SOURCE_DIR}/scene_graph/Exceptions.h
     ${PROJECT_SOURCE_DIR}/scene_graph/NodeOrganizer.h
     ${PROJECT_SOURCE_DIR}/scene_graph/OwnedByNode.h)
 

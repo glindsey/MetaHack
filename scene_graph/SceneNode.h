@@ -10,6 +10,19 @@ class Canvas;
 class DataTie;
 class EventProcessor;
 class NodeOrganizer;
+class SceneNode;
+
+// Using declarations
+using ArtistPtr = std::unique_ptr<Artist>;
+using ArtistVector = std::vector<ArtistPtr>;
+using CanvasPtr = std::unique_ptr<Canvas>;
+using DataTiePtr = std::unique_ptr<DataTie>;
+using DataTieMap = std::map<std::string, DataTiePtr>;
+using EventProcessorPtr = std::unique_ptr<EventProcessor>;
+using EventProcessorVector = std::vector<EventProcessorPtr>;
+using NodeOrganizerPtr = std::unique_ptr<NodeOrganizer>;
+using SceneNodePtr = std::unique_ptr<SceneNode>;
+using NodeVector = std::vector<SceneNodePtr>;
 
 /// A node contained within the scene graph.
 class SceneNode : public Object
@@ -27,22 +40,26 @@ public:
   void setPosition(IntVec2 position);
 
   /// Add a node to this node's children.
+  ///
   /// If the added node already has a parent, attempts to remove the node
-  /// from that parent before continuing; if it can't, the method does
-  /// nothing and returns false.
+  /// from that parent before continuing; if it can't, throws
+  /// SceneNode::CantRemoveChildException.
+  ///
+  /// If this node already owns the child node, simply returns.
+  /// Returns a reference to the child node, whether it was moved or not.
+  ///
   /// \warning This node _takes ownership_ of the child node.
-  bool addChild(SceneNode* newChild);
+  SceneNode& addChild(SceneNodePtr newChild);
 
-  /// Checks whether this node owns a particular child.
-  /// If it does, returns a pointer to that child. Otherwise, returns nullptr.
-  SceneNode* getChild(SceneNode* childToFind);
+  /// Returns a reference to a child.
+  /// If the child does not exist, throws SceneNode::NoSuchChildException.
+  SceneNode& getChild(SceneNode& childToFind);
 
-  /// Gets a pointer to a specific child specified by index.
-  /// If the index provided is out-of-bounds, returns nullptr.
-  SceneNode* getChild(unsigned int idx);
+  /// Gets a reference to a specific child specified by index.
+  SceneNode& getChild(unsigned int idx);
 
-  /// Syntactic sugar for `getChild(SceneNode* child) != nullptr`.
-  bool hasChild(SceneNode* child);
+  /// Returns whether an object owns the specified child.
+  bool hasChild(SceneNode& child);
 
   /// Gets the total number of children this node has.
   unsigned int getChildCount();
@@ -50,52 +67,55 @@ public:
   /// Deletes a node from this node's children.
   /// If the requested node does not exist, the method does nothing and
   /// returns false. Otherwise, it deletes the target node and returns true.
-  bool killChild(SceneNode* childToKill);
+  bool killChild(SceneNode& childToKill);
 
   /// Deletes all children from this node.
   void killAllChildren();
 
   /// Moves this node to a different parent.
   /// `x.moveTo(y)` is functionally equivalent to y.addChild(x).
-  bool moveTo(SceneNode* newParent);
+  void moveTo(SceneNode& newParent);
 
-  /// Returns a pointer to this node's parent.
-  SceneNode* parent();
+  /// Returns a reference to this node's parent.
+  /// If this node does not have a parent, throws SceneNode::OrphanException.
+  SceneNode& parent();
+
+  /// Removes a child from this parent and returns it.
+  /// If the child does not exist, throws SceneNode::NoSuchChildException.
+  /// \warning The caller assumes ownership of the child object.
+  SceneNodePtr removeChild(SceneNode& childToRemove);
 
   /// Returns a reference to this node's canvas.
   Canvas& canvas();
 
-  /// Returns the static root node of the graph.
+  /// Returns a reference to the static root node of the graph.
   static SceneNode& root();
 
 protected:
   /// Handle incoming events by passing them through processors.
   virtual bool onEvent(Event const& event);
 
+  NodeVector::iterator findChild(SceneNode& childToFind);
+
   /// Set this node's parent.
   /// Does _not_ update any previous or new parent's `m_children` member!
   /// That is handled by the public methods that call this one.
   void setParent(SceneNode* parent);
 
-  /// Removes a child from this parent and returns it.
-  /// If the child does not exist, returns nullptr.
-  /// \warning Does _not_ delete the child! The caller assumes ownership of the child object.
-  SceneNode* removeChild(SceneNode* childToRemove);
-
-  /// Returns this node's list of children.
-  std::vector<SceneNode*> const& children();
+  /// Returns a const reference to this node's list of children.
+  NodeVector const& children();
 
   /// Returns a reference to this node's organizer.
   NodeOrganizer& organizer();
 
-  /// Returns this node's list of artists.
-  std::vector<Artist*> const& artists();
+  /// Returns a const reference to this node's list of artists.
+  ArtistVector const& artists();
 
-  /// Returns this node's map of dataties.
-  std::map<std::string, DataTie*> const& dataties();
+  /// Returns a const reference to this node's map of dataties.
+  DataTieMap const& dataties();
 
-  /// Returns this node's list of event processors.
-  std::vector<EventProcessor*> const& processors();
+  /// Returns a const reference to this node's list of event processors.
+  EventProcessorVector const& processors();
 
 private:
   /// Size of this node, in pixels.
@@ -108,22 +128,22 @@ private:
   SceneNode* m_parent;
 
   /// Vector of pointers to scene nodes owned by this one.
-  std::vector<SceneNode*> m_children;
+  NodeVector m_children;
 
   /// Unique pointer to the node organizer owned by this node.
-  std::unique_ptr<NodeOrganizer> m_organizer;
+  NodeOrganizerPtr m_organizer;
 
   /// Vector of pointers to artist instances owned by this node.
-  std::vector<Artist*> m_artists;
+  ArtistVector m_artists;
 
   /// Map of pointers to dataties owned by this node.
-  std::map<std::string, DataTie*> m_dataties;
+  DataTieMap m_dataties;
 
   /// Vector of pointers to event processors owned by this node.
-  std::vector<EventProcessor*> m_processors;
+  EventProcessorVector m_processors;
 
   /// Unique pointer to the canvas owned by this node.
-  std::unique_ptr<Canvas> m_canvas;
+  CanvasPtr m_canvas;
 
   // Mutex for this node.
   // \todo MAYBE. I'm unsure if adding a mutex for thread safety is needed here.

@@ -2,7 +2,6 @@
 
 #include "EventProcessor.h"
 
-#include "Event.h"
 #include "utilities/New.h"
 
 EventProcessor::EventProcessor(SceneNode& node) :

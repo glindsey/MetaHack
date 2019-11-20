@@ -31,6 +31,7 @@ using json = ::nlohmann::json;
 #include <memory>
 #include <queue>
 #include <sstream>
+#include <stdexcept>
 #include <stdlib.h>
 #include <string>
 #include <unordered_map>
