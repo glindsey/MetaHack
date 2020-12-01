@@ -57,9 +57,9 @@ void AppStateMainMenu::execute()
 bool AppStateMainMenu::initialize()
 {
   m_title.setString("Hey y'all main menu in the hizzouse");
-  m_title.setFont(the_default_font);
+  m_title.setFont(App::the_default_font());
   m_subtitle.setString("But actually there's no main menu yet so just press Spacebar.");
-  m_subtitle.setFont(the_default_font);
+  m_subtitle.setFont(App::the_default_font());
   m_subtitle.setCharacterSize(16);
   m_subtitle.setPosition(0, 100);
 

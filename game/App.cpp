@@ -10,6 +10,7 @@
 #include "game/AppStateGameMode.h"
 #include "game/AppStateMainMenu.h"
 #include "game/AppStateSplashScreen.h"
+#include "game/AppVC.h"
 #include "state_machine/StateMachine.h"
 #include "tilesheet/TileSheet.h"
 #include "types/Color.h"
@@ -45,10 +46,8 @@ App::App(sf::RenderWindow& appWindow, sfg::SFGUI& sfgui, sfg::Desktop& desktop)
   UIEvents::EventMouseMoved::id,
   UIEvents::EventMouseLeft::id,
   UIEvents::EventMouseWheelMoved::id }),
-  m_appWindow{ appWindow },
   m_sfgui{ sfgui },
   m_desktop{ desktop },
-  m_appTexture{ NEW sf::RenderTexture() },
   m_isRunning{ false },
   m_hasWindowFocus{ false }
 {
@@ -99,64 +98,18 @@ App::App(sf::RenderWindow& appWindow, sfg::SFGUI& sfgui, sfg::Desktop& desktop)
   SET_UP_LOGGER("Utilities",          false);
 
   auto& config = Config::settings();
+  auto& paths = Config::paths();
+  auto& resourcesPath = paths.resources();
 
-  auto& resourcesPath = Config::paths().resources();
+  // Create the view controller.
+  m_vc.reset(NEW AppVC(paths, config, appWindow));
 
   // Create the app state machine.
   m_stateMachine.reset(NEW StateMachine("app_state_machine", this)),
 
-  // Create the app texture for off-screen composition.
-  m_appTexture->create(m_appWindow.getSize().x, m_appWindow.getSize().y);
-
-  // Create the default fonts.
-  m_fontDefault.reset(NEW sf::Font());
-  std::string defaultFont = config.get("font-name-default");
-  FileName fontName = resourcesPath + "/font/" + defaultFont + ".ttf";
-  if (m_fontDefault->loadFromFile(fontName) == false)
-  {
-    CLOG(FATAL, "App") << "Could not load the default font";
-  }
-
-  m_fontDefaultBold.reset(NEW sf::Font());
-  std::string defaultBoldFont = config.get("font-name-bold");
-  fontName = resourcesPath + "/font/" + defaultBoldFont + ".ttf";
-  if (m_fontDefaultBold->loadFromFile(fontName) == false)
-  {
-    CLOG(FATAL, "App") << "Could not load the default bold font";
-  }
-
-  m_fontDefaultMono.reset(NEW sf::Font());
-  std::string defaultMonoFont = config.get("font-name-mono");
-  fontName = resourcesPath + "/font/" + defaultMonoFont + ".ttf";
-  if (m_fontDefaultMono->loadFromFile(fontName) == false)
-  {
-    CLOG(FATAL, "App") << "Could not load the default monospace font";
-  }
-
-  m_fontDefaultUnicode.reset(NEW sf::Font());
-  std::string defaultUnicodeFont = config.get("font-name-unicode");
-  fontName = resourcesPath + "/font/" + defaultUnicodeFont + ".ttf";
-  if (m_fontDefaultUnicode->loadFromFile(fontName) == false)
-  {
-    CLOG(FATAL, "App") << "Could not load the default Unicode font";
-  }
-
-  // Create the shader program.
-  m_shader.reset(NEW sf::Shader());
-  if (m_shader->loadFromFile(resourcesPath + "/shader/default.vert",
-                             resourcesPath + "/shader/default.frag") == false)
-  {
-    CLOG(FATAL, "App") << "Could not load the default shaders";
-  }
-
   // Create the string dictionary, and try to load the default translation file.
   /// @todo Change this so language can be specified.
   Config::strings().loadFile(resourcesPath + "/strings.en");
-
-  // Create the tilesheet.
-  auto tileSize = config.get("graphics-tile-size");
-  auto textureSize = config.get("tilesheet-texture-size");
-  m_tileSheet.reset(NEW TileSheet(tileSize, textureSize));
 
   // Get the state machine.
   StateMachine& sm = *m_stateMachine;
@@ -178,7 +131,7 @@ App::App(sf::RenderWindow& appWindow, sfg::SFGUI& sfgui, sfg::Desktop& desktop)
 App::~App()
 {
   m_stateMachine.reset();
-  m_appWindow.close();
+  m_vc->window().close();
   s_instance = nullptr;
 }
 
@@ -204,9 +157,9 @@ void App::handleSFMLEvent(sf::Event& sfmlEvent)
 
     case sf::Event::EventType::Resized:
     {
-      m_appTexture.reset(NEW sf::RenderTexture());
-      m_appTexture->create(sfmlEvent.size.width, sfmlEvent.size.height);
-      m_appWindow.setView(sf::View(
+      m_vc->setTexture(NEW sf::RenderTexture());
+      m_vc->texture().create(sfmlEvent.size.width, sfmlEvent.size.height);
+      m_vc->window().setView(sf::View(
         sf::FloatRect(0, 0,
                       static_cast<float>(sfmlEvent.size.width),
                       static_cast<float>(sfmlEvent.size.height))));
@@ -303,7 +256,7 @@ void App::handleSFMLEvent(sf::Event& sfmlEvent)
 
 sf::RenderWindow& App::renderWindow()
 {
-  return m_appWindow;
+  return m_vc->window();
 }
 
 bool App::hasWindowFocus()
@@ -311,34 +264,9 @@ bool App::hasWindowFocus()
   return m_hasWindowFocus;
 }
 
-sf::Font & App::fontDefault()
+AppVC& App::vc()
 {
-  return *m_fontDefault;
-}
-
-sf::Font & App::fontDefaultBold()
-{
-  return *m_fontDefaultBold;
-}
-
-sf::Font & App::fontDefaultMono()
-{
-  return *m_fontDefaultMono;
-}
-
-sf::Font & App::fontDefaultUnicode()
-{
-  return *m_fontDefaultUnicode;
-}
-
-sf::Shader & App::shader()
-{
-  return *m_shader;
-}
-
-TileSheet & App::tileSheet()
-{
-  return *m_tileSheet;
+  return *m_vc;
 }
 
 int App::frameCounter() const
@@ -346,7 +274,7 @@ int App::frameCounter() const
   return m_frameCounter;
 }
 
-App & App::instance()
+App& App::instance()
 {
   if (s_instance)
   {
@@ -356,6 +284,36 @@ App & App::instance()
   {
     throw std::runtime_error("App instance was requested, but it does not exist");
   }
+}
+
+sf::Font& App::the_default_font()
+{
+  return instance().vc().fontDefault();
+}
+
+sf::Font& App::the_default_bold_font()
+{
+  return instance().vc().fontDefaultBold();
+}
+
+sf::Font& App::the_default_mono_font()
+{
+  return instance().vc().fontDefaultMono();
+}
+
+sf::Font& App::the_default_unicode_font()
+{
+  return instance().vc().fontDefaultUnicode();
+}
+
+sf::Shader& App::the_shader()
+{
+  return instance().vc().shader();
+}
+
+TileSheet& App::the_tilesheet()
+{
+  return instance().vc().tileSheet();
 }
 
 void App::run()
@@ -374,7 +332,7 @@ void App::run()
   {
     // Process events
     sf::Event event;
-    while (m_appWindow.pollEvent(event))
+    while (m_vc->window().pollEvent(event))
     {
       m_desktop.HandleEvent(event);
 
@@ -383,32 +341,6 @@ void App::run()
 
     m_stateMachine->execute();
 
-    // Update SFGUI with elapsed seconds since last call.
-    m_desktop.Update(guiClock.restart().asSeconds());
-
-    // Update frame counter if necessary.
-    unsigned int elapsedFrameUsec = frameClock.getElapsedTime().asMicroseconds();
-
-    // Limit to 60fps.
-    if (elapsedFrameUsec >= 16667)
-    {
-      elapsedFrameUsec -= 16667;
-      frameClock.restart();
-      ++m_frameCounter;
-    }
-
-    // Rendering...
-    m_appWindow.clear();
-    m_appTexture->clear(Color::Red);
-
-    m_stateMachine->render(*m_appTexture, m_frameCounter);
-
-    m_appTexture->display();
-    sf::Sprite sprite(m_appTexture->getTexture());
-    m_appWindow.draw(sprite);
-
-    m_sfgui.Display(m_appWindow);
-
-    m_appWindow.display();
+    m_vc->drawEverything(m_desktop, m_sfgui, *m_stateMachine);
   }
 }

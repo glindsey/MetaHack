@@ -110,7 +110,7 @@ namespace Config
         std::cerr << "BREAK" << std::endl;
       }
 
-      the_tilesheet.loadViewResourcesFor(name);
+      App::the_tilesheet().loadViewResourcesFor(name);
     }
   }
 

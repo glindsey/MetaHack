@@ -10,6 +10,7 @@
 #include "types/common.h"
 
 // Forward declarations
+class AppVC;
 class ConfigSettings;
 class MessageLogView;
 class StateMachine;
@@ -17,8 +18,6 @@ class Strings;
 class TileSheet;
 
 /// Class that defines the overall application.
-/// @todo Possibly split all the rendering-specific stuff out into a separate
-///       object. Not entirely sure what the way to go is here.
 class App : public Object
 {
 public:
@@ -93,23 +92,11 @@ public:
 
   bool hasWindowFocus();
 
-  /// Get the default font.
-  sf::Font& fontDefault();
-
-  /// Get the default bold font.
-  sf::Font& fontDefaultBold();
-
-  ///Get the default monospace font.
-  sf::Font& fontDefaultMono();
-
-  /// Get the default Unicode font.
-  sf::Font& fontDefaultUnicode();
-
-  /// Get the shader.
-  sf::Shader& shader();
-
-  /// Get the TileSheet instance.
-  TileSheet& tileSheet();
+  /// Get the view controller.
+  /// @todo Remove this -- eventually there should be no need for other code to
+  ///       directly access the app VC. For now, though, it's necessary so
+  ///       certain VC members can be accessed.
+  AppVC& vc();
 
   /// Get the current frame counter.
   int frameCounter() const;
@@ -118,38 +105,24 @@ public:
   /// If no App instance currently exists, throws an exception.
   static App& instance();
 
-protected:
+  static sf::Font& the_default_font();
+  static sf::Font& the_default_bold_font();
+  static sf::Font& the_default_mono_font();
+  static sf::Font& the_default_unicode_font();
+  static sf::Shader& the_shader();
+  static TileSheet& the_tilesheet();
 
 private:
-  sf::RenderWindow& m_appWindow;
+  /// The App view-controller.
+  std::unique_ptr<AppVC> m_vc;
+
   sfg::SFGUI& m_sfgui;
   sfg::Desktop& m_desktop;
-
-  /// Pointer to off-screen buffer for drawing composition.
-  std::unique_ptr<sf::RenderTexture> m_appTexture;
 
   /// The state machine.
   std::unique_ptr<StateMachine> m_stateMachine;
   bool m_isRunning;
   bool m_hasWindowFocus;
-
-  /// The default font instance.
-  std::unique_ptr<sf::Font> m_fontDefault;
-
-  /// The default bold font instance.
-  std::unique_ptr<sf::Font> m_fontDefaultBold;
-
-  /// The default monospace font instance.
-  std::unique_ptr<sf::Font> m_fontDefaultMono;
-
-  /// The default Unicode font instance.
-  std::unique_ptr<sf::Font> m_fontDefaultUnicode;
-
-  /// The shader instance.
-  std::unique_ptr<sf::Shader> m_shader;
-
-  /// The tilesheet.
-  std::unique_ptr<TileSheet> m_tileSheet;
 
   /// The rendering frame counter.
   int m_frameCounter;
@@ -158,13 +131,5 @@ private:
   static App* s_instance;
 
 };
-
-// Here are a few macros to save on typing.
-#define the_default_font          (App::instance().fontDefault())
-#define the_default_bold_font     (App::instance().fontDefaultBold())
-#define the_default_mono_font     (App::instance().fontDefaultMono())
-#define the_default_unicode_font  (App::instance().fontDefaultUnicode())
-#define the_shader                (App::instance().shader())
-#define the_tilesheet             (App::instance().tileSheet())
 
 #endif // APP_H

@@ -86,7 +86,7 @@ target_link_libraries(
 set(Boost_USE_STATIC_LIBS       OFF)
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
-find_package(Boost 1.69 REQUIRED COMPONENTS chrono filesystem locale random system thread)
+find_package(Boost 1.74 REQUIRED COMPONENTS chrono filesystem locale random system thread)
 target_link_libraries(
     MetaHack PRIVATE
     Boost::chrono
@@ -278,6 +278,7 @@ set(PROJECT_SOURCES_GAME
     ${PROJECT_SOURCE_DIR}/game/AppStateGameMode.cpp
     ${PROJECT_SOURCE_DIR}/game/AppStateMainMenu.cpp
     ${PROJECT_SOURCE_DIR}/game/AppStateSplashScreen.cpp
+    ${PROJECT_SOURCE_DIR}/game/AppVC.cpp
     ${PROJECT_SOURCE_DIR}/game/GameState.cpp)
 
 set(PROJECT_INCLUDES_GAME
@@ -286,6 +287,7 @@ set(PROJECT_INCLUDES_GAME
     ${PROJECT_SOURCE_DIR}/game/AppStateGameMode.h
     ${PROJECT_SOURCE_DIR}/game/AppStateMainMenu.h
     ${PROJECT_SOURCE_DIR}/game/AppStateSplashScreen.h
+    ${PROJECT_SOURCE_DIR}/game/AppVC.h
     ${PROJECT_SOURCE_DIR}/game/GameState.h)
 
 set(PROJECT_SOURCES_GAME_WINDOWS

@@ -36,7 +36,7 @@ void EntityView2D::draw(sf::RenderTarget& target,
 {
   auto& config = Config::settings();
   auto entity = getEntity();
-  auto& texture = the_tilesheet.getTexture();
+  auto& texture = App::the_tilesheet().getTexture();
 
   // Can't render if it doesn't have a Position component.
   if (!COMPONENTS.position.existsFor(entity)) return;
@@ -101,7 +101,7 @@ sf::RectangleShape EntityView2D::drawRectangle(int frame)
 {
   auto& config = Config::settings();
   auto entity = getEntity();
-  auto& texture = the_tilesheet.getTexture();
+  auto& texture = App::the_tilesheet().getTexture();
 
   sf::RectangleShape rectangle;
   sf::IntRect textureCoords;
@@ -144,7 +144,7 @@ UintVec2 EntityView2D::getTileSheetCoords(int frame) const
   UintVec2 offset;
 
   // Get tile coordinates on the sheet.
-  UintVec2 start_coords = the_tilesheet.getTileSheetCoords(COMPONENTS.category[entity]);
+  UintVec2 start_coords = App::the_tilesheet().getTileSheetCoords(COMPONENTS.category[entity]);
 
   // If the entity has the "animated" component, call the Lua function to get the offset (tile to choose).
   if (categoryData["components"].count("animated") > 0)
